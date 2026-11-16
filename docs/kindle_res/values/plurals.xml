@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="a11y_hours">
+        <item quantity="one">%1$d hour</item>
+        <item quantity="other">%1$d hours</item>
+    </plurals>
+    <plurals name="a11y_minutes">
+        <item quantity="one">%1$d minute</item>
+        <item quantity="other">%1$d minutes</item>
+    </plurals>
+    <plurals name="a11y_seconds">
+        <item quantity="one">%1$d second</item>
+        <item quantity="other">%1$d seconds</item>
+    </plurals>
+    <plurals name="account_transition_alert_books_successfully_shared_message">
+        <item quantity="one">&lt;b&gt;A shared book&lt;/b&gt; from %2$s is now in your library.</item>
+        <item quantity="other">&lt;b&gt;%1$d shared books&lt;/b&gt; from %2$s are now in your library.</item>
+    </plurals>
+    <plurals name="account_transition_alert_books_successfully_shared_message_fallback">
+        <item quantity="one">&lt;b&gt;A shared book&lt;/b&gt; from your Amazon Family is now in your library.</item>
+        <item quantity="other">&lt;b&gt;%1$d shared books&lt;/b&gt; from your Amazon Family are now in your library.</item>
+    </plurals>
+    <plurals name="account_transition_banner_sharing_books_sharing_all_text">
+        <item quantity="one">You&apos;re sharing a book with &lt;b&gt;%2$s&lt;/b&gt;, plus any future books.</item>
+        <item quantity="other">You&apos;re sharing all %1$d books with &lt;b&gt;%2$s&lt;/b&gt;, plus any future books.</item>
+    </plurals>
+    <plurals name="account_transition_banner_sharing_books_sharing_all_text_fallback">
+        <item quantity="one">You&apos;re sharing a book with &lt;b&gt;your Amazon Family&lt;/b&gt;, plus any future books.</item>
+        <item quantity="other">You&apos;re sharing all %1$d books with &lt;b&gt;your Amazon Family&lt;/b&gt;, plus any future books.</item>
+    </plurals>
+    <plurals name="account_transition_banner_sharing_books_sharing_subset_text">
+        <item quantity="one">You&apos;re sharing a book with &lt;b&gt;%2$s&lt;/b&gt;.</item>
+        <item quantity="other">You&apos;re sharing %1$d books with &lt;b&gt;%2$s&lt;/b&gt;.</item>
+    </plurals>
+    <plurals name="account_transition_banner_sharing_books_sharing_subset_text_fallback">
+        <item quantity="one">You&apos;re sharing a book with &lt;b&gt;your Amazon Family&lt;/b&gt;.</item>
+        <item quantity="other">You&apos;re sharing %1$d books with &lt;b&gt;your Amazon Family&lt;/b&gt;.</item>
+    </plurals>
+    <plurals name="charts_review_counts">
+        <item quantity="one">one customer review</item>
+        <item quantity="other">%d customer reviews</item>
+    </plurals>
+    <plurals name="dashboard_recaps_zone_description">
+        <item quantity="one">Refresh your memory, %1$d recap in this series</item>
+        <item quantity="other">Refresh your memory, %1$d recaps in this series</item>
+    </plurals>
+    <plurals name="date_string_hours">
+        <item quantity="one">1 hour ago</item>
+        <item quantity="other">%1$d hours ago</item>
+    </plurals>
+    <plurals name="date_string_minutes">
+        <item quantity="one">1 minute ago</item>
+        <item quantity="other">%1$d minutes ago</item>
+    </plurals>
+    <plurals name="dt_eoc_hours">
+        <item quantity="one">%1$d hour</item>
+        <item quantity="other">%1d hours</item>
+    </plurals>
+    <plurals name="dt_eoc_minutes">
+        <item quantity="one">%1$d minute</item>
+        <item quantity="other">%1d minutes</item>
+    </plurals>
+    <plurals name="dt_eoc_seconds">
+        <item quantity="one">%1$d second</item>
+        <item quantity="other">%1d seconds</item>
+    </plurals>
+    <plurals name="dt_eoc_words">
+        <item quantity="one">%1$d word</item>
+        <item quantity="other">%1$d words</item>
+    </plurals>
+    <plurals name="endactions_reviews_more_words">
+        <item quantity="one">%d more word</item>
+        <item quantity="other">%d more words</item>
+    </plurals>
+    <plurals name="exo_controls_fastforward_by_amount_description">
+        <item quantity="one">Fast forward %d second</item>
+        <item quantity="other">Fast forward %d seconds</item>
+    </plurals>
+    <plurals name="exo_controls_rewind_by_amount_description">
+        <item quantity="one">Rewind %d second</item>
+        <item quantity="other">Rewind %d seconds</item>
+    </plurals>
+    <plurals name="expiration_days">
+        <item quantity="one">Expires in 1 day</item>
+        <item quantity="other">Expires in %1$d days</item>
+    </plurals>
+    <plurals name="falkor_story_ownership_count">
+        <item quantity="one">You have %1$d episode of this story.</item>
+        <item quantity="other">You have %1$d episodes of this story.</item>
+    </plurals>
+    <plurals name="family_sharing_setting_profile_sub_text">
+        <item quantity="one">@string/family_sharing_setting_profile_sub_text_single</item>
+        <item quantity="other">@string/family_sharing_setting_profile_sub_text</item>
+    </plurals>
+    <plurals name="hovering_dialog_header_message">
+        <item quantity="one">@string/hovering_dialog_header_message_single_item</item>
+        <item quantity="other">@string/hovering_dialog_header_message</item>
+    </plurals>
+    <plurals name="in_this_issue_header_description">
+        <item quantity="one">In this issue, %1$d article</item>
+        <item quantity="other">In this issue, %1$d articles</item>
+    </plurals>
+    <plurals name="inbook_pfv_bev_bookmarks_available">
+        <item quantity="one">%1$s Bookmark available</item>
+        <item quantity="other">%1$s Bookmarks available</item>
+    </plurals>
+    <plurals name="kre_narrative_accessibility_label_collapsed">
+        <item quantity="one">%1$s, collapsed, %2$s item</item>
+        <item quantity="other">%1$s, collapsed, %2$s items</item>
+    </plurals>
+    <plurals name="kre_narrative_accessibility_label_expanded">
+        <item quantity="one">%1$s, expanded, %2$s item</item>
+        <item quantity="other">%1$s, expanded, %2$s items</item>
+    </plurals>
+    <plurals name="mtrl_badge_content_description">
+        <item quantity="one">%d new notification</item>
+        <item quantity="other">%d new notifications</item>
+    </plurals>
+    <plurals name="n_books_hidden">
+        <item quantity="one">%1$d item moved to Hidden</item>
+        <item quantity="other">%1$d items moved to Hidden</item>
+    </plurals>
+    <plurals name="n_borrowed_books_skipped">
+        <item quantity="one">%1$d item not hidden due to being borrowed content.</item>
+        <item quantity="other">%1$d items not hidden due to being borrowed content.</item>
+    </plurals>
+    <plurals name="oob_search_natural_language_library_result_section_header">
+        <item quantity="zero">In your library, %1$d results</item>
+        <item quantity="one">In your library, %1$d result</item>
+        <item quantity="other">In your library, %1$d results</item>
+    </plurals>
+    <plurals name="oob_search_natural_language_library_results_ready_a11y_announcement">
+        <item quantity="zero">Library results ready, %1$d found</item>
+        <item quantity="one">Library results ready, %1$d found</item>
+        <item quantity="other">Library results ready, %1$d found</item>
+    </plurals>
+    <plurals name="oob_search_recent_searches_a11y_label">
+        <item quantity="one">Recent searches, list of %1$s item</item>
+        <item quantity="other">Recent searches, list of %1$s items</item>
+    </plurals>
+    <plurals name="popularhighlights_annotation_item_label">
+        <item quantity="one">Popular Highlight - %1$d highlighter</item>
+        <item quantity="other">Popular Highlight - %1$d highlighters</item>
+    </plurals>
+    <plurals name="popularhighlights_content_decoration_label">
+        <item quantity="one">%1$d highlighter</item>
+        <item quantity="other">%1$d highlighters</item>
+    </plurals>
+    <plurals name="reading_challenges_days_left">
+        <item quantity="one">%1$d day left</item>
+        <item quantity="other">%1$d days left</item>
+    </plurals>
+    <plurals name="reading_dashboard_annotations_header_description">
+        <item quantity="one">Annotations, %1$d annotation</item>
+        <item quantity="other">Annotations, %1$d annotations</item>
+    </plurals>
+    <plurals name="reading_streaks_days_count">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
+    <plurals name="reading_streaks_weeks_count">
+        <item quantity="one">%1$d week</item>
+        <item quantity="other">%1$d weeks</item>
+    </plurals>
+    <plurals name="saved_books_titles_count">
+        <item quantity="one">%d title</item>
+        <item quantity="other">%d titles</item>
+    </plurals>
+    <plurals name="series_ownership_count_issues">
+        <item quantity="one">You have %1$d issue in this series.</item>
+        <item quantity="other">You have %1$d issues in this series.</item>
+    </plurals>
+    <plurals name="series_ownership_count_omnibus">
+        <item quantity="one">You have %1$d omnibus in this series.</item>
+        <item quantity="other">You have %1$d omnibuses in this series.</item>
+    </plurals>
+    <plurals name="series_ownership_count_trades">
+        <item quantity="one">You have %1$d volume in this series.</item>
+        <item quantity="other">You have %1$d volumes in this series.</item>
+    </plurals>
+    <plurals name="shared_book_count">
+        <item quantity="one">%d New book shared with you</item>
+        <item quantity="other">%d New books shared with you</item>
+    </plurals>
+    <plurals name="startactions_widget_time_to_read_hours">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+    <plurals name="startactions_widget_time_to_read_minutes">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="startactions_widget_time_to_read_pages">
+        <item quantity="one">%d page</item>
+        <item quantity="other">%d pages</item>
+    </plurals>
+    <plurals name="vom_hours">
+        <item quantity="one">%1$d hour</item>
+        <item quantity="other">%1d hours</item>
+    </plurals>
+    <plurals name="vom_minutes">
+        <item quantity="one">%1$d minute</item>
+        <item quantity="other">%1d minutes</item>
+    </plurals>
+    <plurals name="webcomic_likes_content_description">
+        <item quantity="one">%d like</item>
+        <item quantity="other">%d likes</item>
+    </plurals>
+    <plurals name="xray_mentions_count">
+        <item quantity="one">%d mention</item>
+        <item quantity="other">%d mentions</item>
+    </plurals>
+</resources>
