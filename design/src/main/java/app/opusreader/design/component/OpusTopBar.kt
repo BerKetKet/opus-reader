@@ -30,7 +30,7 @@ fun OpusTopBar(
             .fillMaxWidth()
             .height(OpusDimensions.TopBarHeight)
             .background(backgroundColor)
-            .padding(horizontal = OpusDimensions.ScreenMarginHorizontal),
+            .padding(start = OpusDimensions.ScreenMarginHorizontal, end = OpusDimensions.TopBarActionsEndMargin),
         contentAlignment = Alignment.CenterStart
     ) {
         Row(

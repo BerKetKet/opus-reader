@@ -24,7 +24,8 @@ data class ReaderSettings(
     val brightness: Float = 0.8f,
     val libraryViewMode: String = "GRID",
     val librarySortMode: String = "RECENT",
-    val libraryFilter: String = "ALL"
+    val libraryFilter: String = "ALL",
+    val groupBySeries: Boolean = false
 )
 
 interface SettingsRepository {
@@ -38,6 +39,7 @@ interface SettingsRepository {
     suspend fun updateLibraryViewMode(mode: String)
     suspend fun updateLibrarySortMode(mode: String)
     suspend fun updateLibraryFilter(filter: String)
+    suspend fun updateGroupBySeries(groupBySeries: Boolean)
 
     companion object {
         fun create(context: Context): SettingsRepository {
@@ -61,6 +63,7 @@ class DefaultSettingsRepository(
         val LIBRARY_VIEW_MODE = stringPreferencesKey("library_view_mode")
         val LIBRARY_SORT_MODE = stringPreferencesKey("library_sort_mode")
         val LIBRARY_FILTER = stringPreferencesKey("library_filter")
+        val GROUP_BY_SERIES = booleanPreferencesKey("group_by_series")
     }
 
     override val settingsFlow: Flow<ReaderSettings> = context.dataStore.data.map { prefs ->
@@ -74,7 +77,8 @@ class DefaultSettingsRepository(
             brightness = prefs[Keys.BRIGHTNESS] ?: 0.8f,
             libraryViewMode = prefs[Keys.LIBRARY_VIEW_MODE] ?: "GRID",
             librarySortMode = prefs[Keys.LIBRARY_SORT_MODE] ?: "RECENT",
-            libraryFilter = prefs[Keys.LIBRARY_FILTER] ?: "ALL"
+            libraryFilter = prefs[Keys.LIBRARY_FILTER] ?: "ALL",
+            groupBySeries = prefs[Keys.GROUP_BY_SERIES] ?: false
         )
     }
 
@@ -112,5 +116,9 @@ class DefaultSettingsRepository(
 
     override suspend fun updateLibraryFilter(filter: String) {
         context.dataStore.edit { it[Keys.LIBRARY_FILTER] = filter }
+    }
+
+    override suspend fun updateGroupBySeries(groupBySeries: Boolean) {
+        context.dataStore.edit { it[Keys.GROUP_BY_SERIES] = groupBySeries }
     }
 }

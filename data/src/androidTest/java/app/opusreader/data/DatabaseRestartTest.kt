@@ -10,6 +10,7 @@ import app.opusreader.data.entity.BookEntity
 import app.opusreader.data.entity.SpineItemEntity
 import app.opusreader.data.entity.TocEntryEntity
 import app.opusreader.data.importer.EpubImporter
+import app.opusreader.data.repository.SettingsRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -146,5 +147,21 @@ class DatabaseRestartTest {
         }
 
         db.close()
+    }
+
+    @Test
+    fun settingsSurviveProcessRestart() = runBlocking {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val settingsRepo1 = SettingsRepository.create(context)
+        settingsRepo1.updateLibraryViewMode("LIST")
+        settingsRepo1.updateLibrarySortMode("AUTHOR_ZA")
+        settingsRepo1.updateGroupBySeries(true)
+
+        // Simulate process recreation: create a new repository instance pointing to the same DataStore
+        val settingsRepo2 = SettingsRepository.create(context)
+        val loaded = settingsRepo2.settingsFlow.first()
+        assertEquals("LIST", loaded.libraryViewMode)
+        assertEquals("AUTHOR_ZA", loaded.librarySortMode)
+        assertTrue(loaded.groupBySeries)
     }
 }

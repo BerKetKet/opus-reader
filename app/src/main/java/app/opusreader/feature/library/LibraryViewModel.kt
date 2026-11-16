@@ -53,7 +53,8 @@ class LibraryViewModel(
 
                 val savedSortMode = when (settings.librarySortMode) {
                     "TITLE" -> LibrarySortMode.TITLE
-                    "AUTHOR" -> LibrarySortMode.AUTHOR
+                    "AUTHOR", "AUTHOR_AZ" -> LibrarySortMode.AUTHOR_AZ
+                    "AUTHOR_ZA" -> LibrarySortMode.AUTHOR_ZA
                     else -> LibrarySortMode.RECENT
                 }
 
@@ -62,6 +63,7 @@ class LibraryViewModel(
                     "UNREAD" -> LibraryFilter.UNREAD
                     "BOOKS" -> LibraryFilter.BOOKS
                     "SAMPLES" -> LibraryFilter.SAMPLES
+                    "DOCS" -> LibraryFilter.DOCS
                     else -> LibraryFilter.ALL
                 }
 
@@ -72,6 +74,7 @@ class LibraryViewModel(
                         viewMode = savedViewMode,
                         sortMode = savedSortMode,
                         activeFilter = savedFilter,
+                        groupBySeries = settings.groupBySeries,
                         lastReadBook = uiBooks.filter { it.lastReadTimestamp > 0 }
                             .maxByOrNull { it.lastReadTimestamp }
                     )
@@ -89,13 +92,30 @@ class LibraryViewModel(
             result = result.filter { it.collectionName == state.activeCollection }
         }
 
-        // 2. Filter by status
-        result = when (state.activeFilter) {
-            LibraryFilter.ALL -> result
-            LibraryFilter.DOWNLOADED -> result.filter { it.isDownloaded }
-            LibraryFilter.UNREAD -> result.filter { it.progressPercent == 0f }
-            LibraryFilter.BOOKS -> result.filter { !it.isSample }
-            LibraryFilter.SAMPLES -> result.filter { it.isSample }
+        // 2. Filter by status / filterState
+        if (state.filterState.showRead || state.filterState.showUnread || state.filterState.showBooks || state.filterState.showSamples || state.filterState.showDocs) {
+            if (state.filterState.showRead && !state.filterState.showUnread) {
+                result = result.filter { it.isRead }
+            } else if (!state.filterState.showRead && state.filterState.showUnread) {
+                result = result.filter { !it.isRead }
+            }
+            val hasTypeFilter = state.filterState.showBooks || state.filterState.showSamples || state.filterState.showDocs
+            if (hasTypeFilter) {
+                result = result.filter {
+                    (state.filterState.showBooks && !it.isSample && !it.isDoc) ||
+                    (state.filterState.showSamples && it.isSample) ||
+                    (state.filterState.showDocs && it.isDoc)
+                }
+            }
+        } else {
+            result = when (state.activeFilter) {
+                LibraryFilter.ALL -> result
+                LibraryFilter.DOWNLOADED -> result.filter { it.isDownloaded }
+                LibraryFilter.UNREAD -> result.filter { !it.isRead }
+                LibraryFilter.BOOKS -> result.filter { !it.isSample && !it.isDoc }
+                LibraryFilter.SAMPLES -> result.filter { it.isSample }
+                LibraryFilter.DOCS -> result.filter { it.isDoc }
+            }
         }
 
         // 3. Filter by search query
@@ -110,7 +130,8 @@ class LibraryViewModel(
         return when (state.sortMode) {
             LibrarySortMode.RECENT -> result.sortedByDescending { it.lastReadTimestamp }
             LibrarySortMode.TITLE -> result.sortedBy { it.title.lowercase() }
-            LibrarySortMode.AUTHOR -> result.sortedBy { it.author.lowercase() }
+            LibrarySortMode.AUTHOR_AZ -> result.sortedBy { it.author.lowercase() }
+            LibrarySortMode.AUTHOR_ZA -> result.sortedByDescending { it.author.lowercase() }
         }
     }
 
@@ -145,6 +166,20 @@ class LibraryViewModel(
         }
         viewModelScope.launch {
             settingsRepository.updateLibrarySortMode(mode.name)
+        }
+    }
+
+    fun setGroupBySeries(enabled: Boolean) {
+        _uiState.update { it.copy(groupBySeries = enabled) }
+        viewModelScope.launch {
+            settingsRepository.updateGroupBySeries(enabled)
+        }
+    }
+
+    fun onApplyFilterState(filterState: LibraryFilterState) {
+        _uiState.update { current ->
+            val updated = current.copy(filterState = filterState, activeSheet = null)
+            updated.copy(filteredBooks = computeFilteredBooks(updated))
         }
     }
 

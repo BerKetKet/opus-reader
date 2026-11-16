@@ -12,6 +12,12 @@ interface BookDao {
     @Query("SELECT * FROM books ORDER BY lastReadTimestamp DESC, addedTimestamp DESC")
     fun getAllBooks(): Flow<List<BookEntity>>
 
+    @Query("SELECT * FROM books")
+    suspend fun getAllBooksOnce(): List<BookEntity>
+
+    @Query("DELETE FROM books")
+    suspend fun deleteAllBooks()
+
     @Query("SELECT * FROM books WHERE id = :id LIMIT 1")
     suspend fun getBookById(id: String): BookEntity?
 

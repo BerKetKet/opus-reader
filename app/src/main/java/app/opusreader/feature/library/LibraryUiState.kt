@@ -9,15 +9,29 @@ enum class LibraryViewMode {
 enum class LibrarySortMode {
     RECENT,
     TITLE,
-    AUTHOR
+    AUTHOR_AZ,
+    AUTHOR_ZA;
+
+    companion object {
+        val AUTHOR = AUTHOR_AZ
+    }
 }
+
+data class LibraryFilterState(
+    val showRead: Boolean = false,
+    val showUnread: Boolean = false,
+    val showBooks: Boolean = false,
+    val showSamples: Boolean = false,
+    val showDocs: Boolean = false
+)
 
 enum class LibraryFilter {
     ALL,
     DOWNLOADED,
     UNREAD,
     BOOKS,
-    SAMPLES
+    SAMPLES,
+    DOCS
 }
 
 enum class ActiveSheet {
@@ -37,7 +51,10 @@ data class BookUiModel(
     val isSample: Boolean,
     val isNew: Boolean,
     val collectionName: String?,
-    val lastReadTimestamp: Long
+    val lastReadTimestamp: Long,
+    val isRead: Boolean = progressPercent >= 1.0f,
+    val isDoc: Boolean = false,
+    val fileSize: String = "15 MB"
 )
 
 data class LibraryUiState(
@@ -47,8 +64,10 @@ data class LibraryUiState(
     val activeCollection: String? = null,
     val searchQuery: String = "",
     val activeFilter: LibraryFilter = LibraryFilter.ALL,
+    val filterState: LibraryFilterState = LibraryFilterState(),
     val viewMode: LibraryViewMode = LibraryViewMode.GRID,
     val sortMode: LibrarySortMode = LibrarySortMode.RECENT,
+    val groupBySeries: Boolean = false,
     val lastReadBook: BookUiModel? = null,
     val activeSheet: ActiveSheet? = null,
     val selectedBookForMenu: BookUiModel? = null,

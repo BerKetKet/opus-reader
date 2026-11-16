@@ -19,7 +19,11 @@ object OpusDimensions {
 
     // Measured component dimensions
     val MinTouchTarget: Dp = 48.dp
-    val TopBarHeight: Dp = 56.dp
+    val TopBarHeight: Dp = 171.refPx
+    val TopBarActionsEndMargin: Dp = 48.refPx
+    val SearchToDividerSpacing: Dp = 42.refPx
+    val DividerToGridSpacing: Dp = 68.refPx
+    val DividerToListSpacing: Dp = 33.refPx
     val ScreenMarginHorizontal: Dp = 44.refPx // ~16.8 dp
     val DividerThickness: Dp = 3.refPx // ~1.14 dp
 
@@ -35,6 +39,7 @@ object OpusDimensions {
     // Cover Tiles
     val GridCoverWidth: Dp = 279.refPx // ~106.3 dp
     val GridCoverHeight: Dp = 427.refPx // ~162.7 dp
+    val GridColumnGap: Dp = 46.refPx
     val GridRowPitch: Dp = 474.refPx // ~180.6 dp
     val GridRowGap: Dp = 47.refPx // ~17.9 dp
     val GridSideMargin: Dp = 75.refPx // ~28.6 dp
@@ -44,8 +49,9 @@ object OpusDimensions {
     val ListRowPitch: Dp = 318.refPx // ~121.1 dp
 
     val ResumeCoverWidth: Dp = 124.refPx // ~47.2 dp
-    val ResumeCoverHeight: Dp = 209.refPx // ~79.6 dp
-    val ResumeCoverOffsetBottom: Dp = 98.refPx // ~37.3 dp
+    val ResumeCoverHeight: Dp = 207.refPx // ~78.8 dp
+    val ResumeCoverOffsetBottom: Dp = 34.refPx // ~13.0 dp (calibrated for 6dp card elevation to align bottom at y=2242)
+    val ResumeCoverMarginStart: Dp = 73.refPx // ~27.8 dp
 
     // Sheet
     val SheetHandleWidth: Dp = 32.dp
@@ -53,6 +59,8 @@ object OpusDimensions {
     val SheetHandlePaddingTop: Dp = 7.dp
     val SheetHandlePaddingBottom: Dp = 12.dp
     val SheetCornerRadius: Dp = 16.dp
+    val FilterSheetHeight: Dp = 1262.refPx
+    val ViewSortSheetHeight: Dp = 1582.refPx
 
     // Chips
     val ChipHeight: Dp = 36.dp

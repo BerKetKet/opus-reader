@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
@@ -35,25 +36,26 @@ fun OpusBottomNavBar(
     items: List<OpusNavItem>,
     selectedId: Int,
     onItemSelected: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = OpusColors.BackgroundDark,
+    hasLeadingResumeSlot: Boolean = true
 ) {
-    Column(
+    Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(OpusColors.BottomBarDark)
-            .testTag("opus_bottom_nav_bar")
+            .height(OpusDimensions.BottomNavHeight)
+            .background(backgroundColor)
+            .testTag("opus_bottom_nav_bar"),
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        HorizontalDivider(
-            thickness = OpusDimensions.DividerThickness,
-            color = OpusColors.DividerDark
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(OpusDimensions.BottomNavHeight),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+            if (hasLeadingResumeSlot) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                )
+            }
             items.forEach { item ->
                 val isSelected = item.id == selectedId
                 val tint = if (isSelected) OpusColors.AccentBlue else OpusColors.TextSecondaryDark
@@ -85,5 +87,4 @@ fun OpusBottomNavBar(
                 }
             }
         }
-    }
 }

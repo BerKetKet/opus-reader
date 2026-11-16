@@ -1,8 +1,7 @@
 package app.opusreader.feature.library
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,44 +15,58 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.FormatListBulleted
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Sort
+import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.opusreader.R
 import app.opusreader.design.component.OpusBottomSheet
 import app.opusreader.design.component.OpusCheckboxRow
 import app.opusreader.design.component.OpusChevronRow
-import app.opusreader.design.component.OpusChip
 import app.opusreader.design.component.OpusCoverTile
 import app.opusreader.design.component.OpusListRow
 import app.opusreader.design.component.OpusResumeCover
@@ -62,6 +75,7 @@ import app.opusreader.design.component.OpusTopBar
 import app.opusreader.design.theme.OpusColors
 import app.opusreader.design.theme.OpusDimensions
 import app.opusreader.design.theme.OpusTypography
+import coil.compose.AsyncImage
 
 @Composable
 fun LibraryScreen(
@@ -80,8 +94,13 @@ fun LibraryScreen(
     onAssignCollection: (String, String?) -> Unit,
     onNewCollectionNameChanged: (String) -> Unit,
     onCreateCollection: (String) -> Unit,
+    onGroupBySeriesChange: (Boolean) -> Unit,
+    onApplyFilterState: (LibraryFilterState) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val gridState = rememberLazyGridState()
+    val listState = rememberLazyListState()
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -97,7 +116,7 @@ fun LibraryScreen(
                     {
                         IconButton(onClick = { onSelectCollection(null) }) {
                             Icon(
-                                imageVector = Icons.Default.ArrowBack,
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Back",
                                 tint = OpusColors.TextPrimaryDark
                             )
@@ -120,7 +139,7 @@ fun LibraryScreen(
                         modifier = Modifier.testTag("library_view_sort_button")
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Sort,
+                            imageVector = Icons.Default.SwapVert,
                             contentDescription = "View and Sort",
                             tint = OpusColors.TextPrimaryDark
                         )
@@ -129,80 +148,30 @@ fun LibraryScreen(
                 modifier = Modifier.testTag("library_top_bar")
             )
 
-            // Search Bar
+            // Search Bar immediately below top bar
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(
-                        horizontal = OpusDimensions.ScreenMarginHorizontal,
-                        vertical = OpusDimensions.SpacingSmall
-                    )
+                    .padding(horizontal = OpusDimensions.ScreenMarginHorizontal)
             ) {
                 OpusSearchPill(
                     query = uiState.searchQuery,
                     onQueryChange = onSearchQueryChange,
                     onClear = { onSearchQueryChange("") },
-                    placeholder = "Search your books...",
+                    placeholder = stringResource(R.string.search_hint),
                     onSearchAction = { },
                     modifier = Modifier.testTag("library_search_pill")
                 )
             }
 
-            // Filter Chips Bar (D01 / D07)
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("library_filter_chips_row"),
-                contentPadding = PaddingValues(horizontal = OpusDimensions.ScreenMarginHorizontal),
-                horizontalArrangement = Arrangement.spacedBy(OpusDimensions.SpacingSmall)
-            ) {
-                item {
-                    OpusChip(
-                        label = "Downloaded",
-                        selected = uiState.activeFilter == LibraryFilter.DOWNLOADED,
-                        onClick = {
-                            val next = if (uiState.activeFilter == LibraryFilter.DOWNLOADED) LibraryFilter.ALL else LibraryFilter.DOWNLOADED
-                            onFilterChange(next)
-                        },
-                        modifier = Modifier.testTag("library_chip_downloaded")
-                    )
-                }
-                item {
-                    OpusChip(
-                        label = "Unread",
-                        selected = uiState.activeFilter == LibraryFilter.UNREAD,
-                        onClick = {
-                            val next = if (uiState.activeFilter == LibraryFilter.UNREAD) LibraryFilter.ALL else LibraryFilter.UNREAD
-                            onFilterChange(next)
-                        },
-                        modifier = Modifier.testTag("library_chip_unread")
-                    )
-                }
-                item {
-                    OpusChip(
-                        label = "Books",
-                        selected = uiState.activeFilter == LibraryFilter.BOOKS,
-                        onClick = {
-                            val next = if (uiState.activeFilter == LibraryFilter.BOOKS) LibraryFilter.ALL else LibraryFilter.BOOKS
-                            onFilterChange(next)
-                        },
-                        modifier = Modifier.testTag("library_chip_books")
-                    )
-                }
-                item {
-                    OpusChip(
-                        label = "Samples",
-                        selected = uiState.activeFilter == LibraryFilter.SAMPLES,
-                        onClick = {
-                            val next = if (uiState.activeFilter == LibraryFilter.SAMPLES) LibraryFilter.ALL else LibraryFilter.SAMPLES
-                            onFilterChange(next)
-                        },
-                        modifier = Modifier.testTag("library_chip_samples")
-                    )
-                }
-            }
+            // Distance from search pill to divider
+            Spacer(modifier = Modifier.height(OpusDimensions.SearchToDividerSpacing))
 
-            Spacer(modifier = Modifier.height(OpusDimensions.SpacingSmall))
+            // Divider below search bar
+            HorizontalDivider(
+                thickness = OpusDimensions.DividerThickness,
+                color = OpusColors.DividerDark
+            )
 
             // Main Content Area based on ViewMode
             Box(
@@ -214,6 +183,7 @@ fun LibraryScreen(
                     LibraryViewMode.GRID -> {
                         LibraryGridView(
                             books = uiState.filteredBooks,
+                            gridState = gridState,
                             onOpenBook = onOpenBook,
                             onLongPressBook = { book -> onOpenSheet(ActiveSheet.BOOK_MENU, book) }
                         )
@@ -221,6 +191,7 @@ fun LibraryScreen(
                     LibraryViewMode.LIST -> {
                         LibraryListView(
                             books = uiState.filteredBooks,
+                            listState = listState,
                             onOpenBook = onOpenBook,
                             onLongPressBook = { book -> onOpenSheet(ActiveSheet.BOOK_MENU, book) }
                         )
@@ -240,42 +211,22 @@ fun LibraryScreen(
             }
         }
 
-        // Floating Resume Cover (D01 / D07)
-        if (uiState.lastReadBook != null && uiState.activeSheet == null) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(
-                        start = OpusDimensions.ScreenMarginHorizontal,
-                        bottom = OpusDimensions.SpacingXLarge
-                    )
-                    .testTag("library_resume_cover")
-            ) {
-                OpusResumeCover(
-                    title = uiState.lastReadBook.title,
-                    onResumeClick = { onOpenBook(uiState.lastReadBook.id) }
-                )
-            }
-        }
-
-        // Sheets
+        // Bottom Sheets
         when (uiState.activeSheet) {
             ActiveSheet.FILTER -> {
                 FilterBottomSheet(
-                    activeFilter = uiState.activeFilter,
-                    totalCount = uiState.allBooks.size,
-                    downloadedCount = uiState.allBooks.count { it.isDownloaded },
-                    unreadCount = uiState.allBooks.count { it.progressPercent == 0f },
-                    booksCount = uiState.allBooks.count { !it.isSample },
-                    samplesCount = uiState.allBooks.count { it.isSample },
-                    onFilterChange = onFilterChange,
+                    filterState = uiState.filterState,
+                    allBooks = uiState.allBooks,
+                    onApplyFilter = onApplyFilterState,
                     onDismiss = onDismissSheet
                 )
             }
             ActiveSheet.VIEW_SORT -> {
                 ViewSortBottomSheet(
+                    groupBySeries = uiState.groupBySeries,
                     viewMode = uiState.viewMode,
                     sortMode = uiState.sortMode,
+                    onGroupBySeriesChange = onGroupBySeriesChange,
                     onViewModeChange = onViewModeChange,
                     onSortModeChange = onSortModeChange,
                     onDismiss = onDismissSheet
@@ -289,8 +240,12 @@ fun LibraryScreen(
                         onToggleReadStatus = { onToggleReadStatus(uiState.selectedBookForMenu.id) },
                         onToggleDownload = { onToggleDownload(uiState.selectedBookForMenu.id) },
                         onDeleteBook = { onDeleteBook(uiState.selectedBookForMenu.id) },
-                        onAssignCollection = { coll -> onAssignCollection(uiState.selectedBookForMenu.id, coll) },
-                        onCreateCollection = { onOpenSheet(ActiveSheet.CREATE_COLLECTION, uiState.selectedBookForMenu) },
+                        onAssignCollection = { colName ->
+                            onAssignCollection(uiState.selectedBookForMenu.id, colName)
+                        },
+                        onCreateCollection = {
+                            onOpenSheet(ActiveSheet.CREATE_COLLECTION, uiState.selectedBookForMenu)
+                        },
                         onDismiss = onDismissSheet
                     )
                 }
@@ -299,11 +254,15 @@ fun LibraryScreen(
                 CreateCollectionBottomSheet(
                     input = uiState.newCollectionNameInput,
                     onInputChange = onNewCollectionNameChanged,
-                    onSave = { onCreateCollection(uiState.newCollectionNameInput) },
+                    onSave = {
+                        if (uiState.newCollectionNameInput.isNotBlank()) {
+                            onCreateCollection(uiState.newCollectionNameInput.trim())
+                        }
+                    },
                     onDismiss = onDismissSheet
                 )
             }
-            null -> { /* No sheet open */ }
+            null -> { }
         }
     }
 }
@@ -311,6 +270,7 @@ fun LibraryScreen(
 @Composable
 private fun LibraryGridView(
     books: List<BookUiModel>,
+    gridState: LazyGridState,
     onOpenBook: (String) -> Unit,
     onLongPressBook: (BookUiModel) -> Unit
 ) {
@@ -330,15 +290,18 @@ private fun LibraryGridView(
     } else {
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
+            state = gridState,
             modifier = Modifier
                 .fillMaxSize()
                 .testTag("library_books_grid"),
             contentPadding = PaddingValues(
-                horizontal = OpusDimensions.ScreenMarginHorizontal,
-                vertical = OpusDimensions.SpacingSmall
+                start = OpusDimensions.GridSideMargin,
+                end = OpusDimensions.GridSideMargin,
+                top = OpusDimensions.DividerToGridSpacing,
+                bottom = OpusDimensions.BottomNavHeight
             ),
-            horizontalArrangement = Arrangement.spacedBy(OpusDimensions.SpacingStandard),
-            verticalArrangement = Arrangement.spacedBy(OpusDimensions.SpacingLarge)
+            horizontalArrangement = Arrangement.spacedBy(OpusDimensions.GridColumnGap),
+            verticalArrangement = Arrangement.spacedBy(OpusDimensions.GridRowGap)
         ) {
             items(books, key = { it.id }) { book ->
                 OpusCoverTile(
@@ -348,6 +311,16 @@ private fun LibraryGridView(
                     isSample = book.isSample,
                     isNew = book.isNew,
                     progressPercent = book.progressPercent,
+                    coverContent = if (book.coverPath != null) {
+                        {
+                            AsyncImage(
+                                model = book.coverPath,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                    } else null,
                     onClick = { onOpenBook(book.id) },
                     onLongClick = { onLongPressBook(book) },
                     modifier = Modifier.testTag("book_tile_${book.id}")
@@ -360,6 +333,7 @@ private fun LibraryGridView(
 @Composable
 private fun LibraryListView(
     books: List<BookUiModel>,
+    listState: LazyListState,
     onOpenBook: (String) -> Unit,
     onLongPressBook: (BookUiModel) -> Unit
 ) {
@@ -378,9 +352,14 @@ private fun LibraryListView(
         }
     } else {
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
-                .testTag("library_books_list")
+                .testTag("library_books_list"),
+            contentPadding = PaddingValues(
+                top = OpusDimensions.DividerToListSpacing,
+                bottom = OpusDimensions.BottomNavHeight
+            )
         ) {
             items(books, key = { it.id }) { book ->
                 OpusListRow(
@@ -388,19 +367,31 @@ private fun LibraryListView(
                     subtitle = book.author,
                     onClick = { onOpenBook(book.id) },
                     leadingContent = {
-                        Box(
-                            modifier = Modifier
-                                .width(OpusDimensions.ListCoverWidth)
-                                .height(OpusDimensions.ListCoverHeight)
-                                .clip(RoundedCornerShape(2.dp))
-                                .background(OpusColors.SurfaceVariantDark),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = book.title.take(1),
-                                style = OpusTypography.titleMedium,
-                                color = OpusColors.TextPrimaryDark
+                        if (book.coverPath != null) {
+                            AsyncImage(
+                                model = book.coverPath,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .width(OpusDimensions.ListCoverWidth)
+                                    .height(OpusDimensions.ListCoverHeight)
+                                    .clip(RoundedCornerShape(2.dp))
                             )
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .width(OpusDimensions.ListCoverWidth)
+                                    .height(OpusDimensions.ListCoverHeight)
+                                    .clip(RoundedCornerShape(2.dp))
+                                    .background(OpusColors.SurfaceVariantDark),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = book.title.take(1),
+                                    style = OpusTypography.titleMedium,
+                                    color = OpusColors.TextPrimaryDark
+                                )
+                            }
                         }
                     },
                     trailingContent = {
@@ -434,43 +425,75 @@ private fun LibraryCollectionsView(
             .fillMaxSize()
             .testTag("library_collections_list")
     ) {
-        // "New collection" creation row
-        OpusListRow(
-            title = "New Collection",
-            subtitle = "Create a collection to organize your library",
-            leadingContent = {
-                Box(
+        if (collections.isEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = OpusDimensions.SpacingXLarge)
+                    .testTag("collections_empty_state"),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Collections (0)",
+                    style = OpusTypography.bodyMedium,
+                    color = OpusColors.TextSecondaryDark
+                )
+
+                Spacer(modifier = Modifier.height(OpusDimensions.SpacingStandard))
+
+                HorizontalDivider(
+                    thickness = OpusDimensions.DividerThickness,
+                    color = OpusColors.DividerDark
+                )
+
+                Spacer(modifier = Modifier.height(OpusDimensions.SpacingXXLarge))
+
+                Row(
                     modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(OpusColors.SurfaceVariantDark),
-                    contentAlignment = Alignment.Center
+                        .clickable(onClick = onCreateCollectionClick)
+                        .padding(horizontal = OpusDimensions.ScreenMarginHorizontal, vertical = OpusDimensions.SpacingMedium),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = "New Collection",
-                        tint = OpusColors.TextPrimaryDark
+                        contentDescription = "Create a new collection",
+                        tint = OpusColors.AccentBlue,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(OpusDimensions.SpacingSmall))
+                    Text(
+                        text = "CREATE A NEW COLLECTION",
+                        style = OpusTypography.labelLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = OpusColors.AccentBlue,
+                            letterSpacing = 1.sp
+                        )
                     )
                 }
-            },
-            onClick = onCreateCollectionClick,
-            modifier = Modifier.testTag("create_collection_row")
-        )
-
-        if (collections.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .testTag("collections_empty_state"),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "No collections yet",
-                    style = OpusTypography.bodyLarge,
-                    color = OpusColors.TextSecondaryDark
-                )
             }
         } else {
+            OpusListRow(
+                title = "New Collection",
+                subtitle = "Create a collection to organize your library",
+                leadingContent = {
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(OpusColors.SurfaceVariantDark),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "New Collection",
+                            tint = OpusColors.TextPrimaryDark
+                        )
+                    }
+                },
+                onClick = onCreateCollectionClick,
+                modifier = Modifier.testTag("create_collection_row")
+            )
+
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -491,27 +514,38 @@ private fun LibraryCollectionsView(
 
 @Composable
 private fun FilterBottomSheet(
-    activeFilter: LibraryFilter,
-    totalCount: Int,
-    downloadedCount: Int,
-    unreadCount: Int,
-    booksCount: Int,
-    samplesCount: Int,
-    onFilterChange: (LibraryFilter) -> Unit,
+    filterState: LibraryFilterState,
+    allBooks: List<BookUiModel>,
+    onApplyFilter: (LibraryFilterState) -> Unit,
     onDismiss: () -> Unit
 ) {
+    var state by remember { mutableStateOf(filterState) }
+    var readStateExpanded by remember { mutableStateOf(true) }
+    var contentTypeExpanded by remember { mutableStateOf(true) }
+
+    val readCount = allBooks.count { it.isRead }
+    val unreadCount = allBooks.count { !it.isRead }
+    val booksCount = allBooks.count { !it.isSample && !it.isDoc }
+    val samplesCount = allBooks.count { it.isSample }
+    val docsCount = allBooks.count { it.isDoc }
+
     OpusBottomSheet(
         visible = true,
         onDismissRequest = onDismiss,
+        expandedHeight = OpusDimensions.FilterSheetHeight,
+        showDragHandle = false,
         modifier = Modifier.testTag("library_filter_sheet")
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = OpusDimensions.ScreenMarginHorizontal)
+                .padding(top = OpusDimensions.SpacingLarge)
         ) {
+            // Header: Filter & DONE
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = OpusDimensions.ScreenMarginHorizontal),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -520,61 +554,146 @@ private fun FilterBottomSheet(
                     style = OpusTypography.headlineMedium,
                     color = OpusColors.TextPrimaryDark
                 )
-                Button(
-                    onClick = onDismiss,
-                    colors = ButtonDefaults.buttonColors(containerColor = OpusColors.SurfaceVariantDark),
-                    modifier = Modifier.testTag("filter_done_button")
-                ) {
-                    Text("Done", color = OpusColors.TextPrimaryDark)
-                }
+                Text(
+                    text = "DONE",
+                    style = OpusTypography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = OpusColors.HighlightBlue,
+                    modifier = Modifier
+                        .clickable { onApplyFilter(state) }
+                        .testTag("filter_done_button")
+                )
             }
 
             Spacer(modifier = Modifier.height(OpusDimensions.SpacingStandard))
 
-            OpusCheckboxRow(
-                title = "All ($totalCount)",
-                checked = activeFilter == LibraryFilter.ALL,
-                onCheckedChange = { onFilterChange(LibraryFilter.ALL) },
-                modifier = Modifier.testTag("filter_opt_all")
-            )
+            // Section 1: Read state
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { readStateExpanded = !readStateExpanded }
+                    .padding(horizontal = OpusDimensions.ScreenMarginHorizontal, vertical = OpusDimensions.SpacingSmall),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = if (readStateExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    contentDescription = null,
+                    tint = OpusColors.HighlightBlue,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(OpusDimensions.SpacingSmall))
+                Text(
+                    text = "Read state",
+                    style = OpusTypography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                    color = OpusColors.HighlightBlue
+                )
+            }
 
-            OpusCheckboxRow(
-                title = "Downloaded ($downloadedCount)",
-                checked = activeFilter == LibraryFilter.DOWNLOADED,
-                onCheckedChange = { onFilterChange(LibraryFilter.DOWNLOADED) },
-                modifier = Modifier.testTag("filter_opt_downloaded")
-            )
+            if (readStateExpanded) {
+                HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+                FilterItemRow(
+                    label = "Read ($readCount)",
+                    selected = state.showRead,
+                    onClick = { state = state.copy(showRead = !state.showRead) },
+                    modifier = Modifier.testTag("filter_opt_read")
+                )
+                HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+                FilterItemRow(
+                    label = "Unread ($unreadCount)",
+                    selected = state.showUnread,
+                    onClick = { state = state.copy(showUnread = !state.showUnread) },
+                    modifier = Modifier.testTag("filter_opt_unread")
+                )
+            }
 
-            OpusCheckboxRow(
-                title = "Unread ($unreadCount)",
-                checked = activeFilter == LibraryFilter.UNREAD,
-                onCheckedChange = { onFilterChange(LibraryFilter.UNREAD) },
-                modifier = Modifier.testTag("filter_opt_unread")
-            )
+            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
 
-            OpusCheckboxRow(
-                title = "Books ($booksCount)",
-                checked = activeFilter == LibraryFilter.BOOKS,
-                onCheckedChange = { onFilterChange(LibraryFilter.BOOKS) },
-                modifier = Modifier.testTag("filter_opt_books")
-            )
+            // Section 2: Content type
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { contentTypeExpanded = !contentTypeExpanded }
+                    .padding(horizontal = OpusDimensions.ScreenMarginHorizontal, vertical = OpusDimensions.SpacingSmall),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = if (contentTypeExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    contentDescription = null,
+                    tint = OpusColors.HighlightBlue,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(OpusDimensions.SpacingSmall))
+                Text(
+                    text = "Content type",
+                    style = OpusTypography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                    color = OpusColors.HighlightBlue
+                )
+            }
 
-            OpusCheckboxRow(
-                title = "Samples ($samplesCount)",
-                checked = activeFilter == LibraryFilter.SAMPLES,
-                onCheckedChange = { onFilterChange(LibraryFilter.SAMPLES) },
-                modifier = Modifier.testTag("filter_opt_samples")
-            )
+            if (contentTypeExpanded) {
+                HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+                FilterItemRow(
+                    label = "Books ($booksCount)",
+                    selected = state.showBooks,
+                    onClick = { state = state.copy(showBooks = !state.showBooks) },
+                    modifier = Modifier.testTag("filter_opt_books")
+                )
+                HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+                FilterItemRow(
+                    label = "Samples ($samplesCount)",
+                    selected = state.showSamples,
+                    onClick = { state = state.copy(showSamples = !state.showSamples) },
+                    modifier = Modifier.testTag("filter_opt_samples")
+                )
+                HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+                FilterItemRow(
+                    label = "Docs ($docsCount)",
+                    selected = state.showDocs,
+                    onClick = { state = state.copy(showDocs = !state.showDocs) },
+                    modifier = Modifier.testTag("filter_opt_docs")
+                )
+                HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+            }
+        }
+    }
+}
 
-            Spacer(modifier = Modifier.height(OpusDimensions.SpacingXXLarge))
+@Composable
+private fun FilterItemRow(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = OpusDimensions.ScreenMarginHorizontal, vertical = OpusDimensions.SpacingMedium),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            style = OpusTypography.bodyLarge,
+            color = OpusColors.TextPrimaryDark
+        )
+        if (selected) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = "Selected",
+                tint = OpusColors.HighlightBlue,
+                modifier = Modifier.size(20.dp)
+            )
         }
     }
 }
 
 @Composable
 private fun ViewSortBottomSheet(
+    groupBySeries: Boolean,
     viewMode: LibraryViewMode,
     sortMode: LibrarySortMode,
+    onGroupBySeriesChange: (Boolean) -> Unit,
     onViewModeChange: (LibraryViewMode) -> Unit,
     onSortModeChange: (LibrarySortMode) -> Unit,
     onDismiss: () -> Unit
@@ -582,68 +701,165 @@ private fun ViewSortBottomSheet(
     OpusBottomSheet(
         visible = true,
         onDismissRequest = onDismiss,
+        expandedHeight = OpusDimensions.ViewSortSheetHeight,
+        showDragHandle = false,
         modifier = Modifier.testTag("library_view_sort_sheet")
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = OpusDimensions.ScreenMarginHorizontal)
+                .padding(top = OpusDimensions.SpacingLarge)
         ) {
-            Text(
-                text = "View",
-                style = OpusTypography.headlineMedium,
-                color = OpusColors.TextPrimaryDark
-            )
-            Spacer(modifier = Modifier.height(OpusDimensions.SpacingSmall))
-
-            OpusCheckboxRow(
-                title = "Grid View",
-                checked = viewMode == LibraryViewMode.GRID,
-                onCheckedChange = { onViewModeChange(LibraryViewMode.GRID) },
-                modifier = Modifier.testTag("view_opt_grid")
-            )
-            OpusCheckboxRow(
-                title = "List View",
-                checked = viewMode == LibraryViewMode.LIST,
-                onCheckedChange = { onViewModeChange(LibraryViewMode.LIST) },
-                modifier = Modifier.testTag("view_opt_list")
-            )
-            OpusCheckboxRow(
-                title = "Collections View",
-                checked = viewMode == LibraryViewMode.COLLECTIONS,
-                onCheckedChange = { onViewModeChange(LibraryViewMode.COLLECTIONS) },
-                modifier = Modifier.testTag("view_opt_collections")
-            )
+            // Header: View & sort / DONE
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = OpusDimensions.ScreenMarginHorizontal),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "View & sort",
+                    style = OpusTypography.headlineMedium,
+                    color = OpusColors.TextPrimaryDark
+                )
+                Text(
+                    text = "DONE",
+                    style = OpusTypography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = OpusColors.HighlightBlue,
+                    modifier = Modifier
+                        .clickable { onDismiss() }
+                        .testTag("view_sort_done_button")
+                )
+            }
 
             Spacer(modifier = Modifier.height(OpusDimensions.SpacingStandard))
+            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
 
-            Text(
-                text = "Sort",
-                style = OpusTypography.headlineMedium,
-                color = OpusColors.TextPrimaryDark
+            // Group by series toggle
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = OpusDimensions.ScreenMarginHorizontal, vertical = OpusDimensions.SpacingSmall),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Group by series",
+                    style = OpusTypography.bodyLarge,
+                    color = OpusColors.TextPrimaryDark
+                )
+                Switch(
+                    checked = groupBySeries,
+                    onCheckedChange = onGroupBySeriesChange,
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color.White,
+                        checkedTrackColor = OpusColors.HighlightBlue,
+                        uncheckedThumbColor = Color(0xFF9E9E9E),
+                        uncheckedTrackColor = Color(0xFF333333)
+                    ),
+                    modifier = Modifier.testTag("group_by_series_switch")
+                )
+            }
+
+            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+
+            // View Section
+            SheetOptionRow(
+                icon = Icons.Default.GridView,
+                label = "Grid",
+                selected = viewMode == LibraryViewMode.GRID,
+                onClick = { onViewModeChange(LibraryViewMode.GRID) },
+                modifier = Modifier.testTag("view_opt_grid")
             )
-            Spacer(modifier = Modifier.height(OpusDimensions.SpacingSmall))
+            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+            SheetOptionRow(
+                icon = Icons.AutoMirrored.Filled.FormatListBulleted,
+                label = "List",
+                selected = viewMode == LibraryViewMode.LIST,
+                onClick = { onViewModeChange(LibraryViewMode.LIST) },
+                modifier = Modifier.testTag("view_opt_list")
+            )
+            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+            SheetOptionRow(
+                icon = Icons.Default.Folder,
+                label = "Collections",
+                selected = viewMode == LibraryViewMode.COLLECTIONS,
+                onClick = { onViewModeChange(LibraryViewMode.COLLECTIONS) },
+                modifier = Modifier.testTag("view_opt_collections")
+            )
+            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
 
-            OpusCheckboxRow(
-                title = "Recent",
-                checked = sortMode == LibrarySortMode.RECENT,
-                onCheckedChange = { onSortModeChange(LibrarySortMode.RECENT) },
+            // Sort Section
+            SheetOptionRow(
+                label = "Most Recent",
+                selected = sortMode == LibrarySortMode.RECENT,
+                onClick = { onSortModeChange(LibrarySortMode.RECENT) },
                 modifier = Modifier.testTag("sort_opt_recent")
             )
-            OpusCheckboxRow(
-                title = "Title",
-                checked = sortMode == LibrarySortMode.TITLE,
-                onCheckedChange = { onSortModeChange(LibrarySortMode.TITLE) },
+            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+            SheetOptionRow(
+                label = "Title",
+                selected = sortMode == LibrarySortMode.TITLE,
+                onClick = { onSortModeChange(LibrarySortMode.TITLE) },
                 modifier = Modifier.testTag("sort_opt_title")
             )
-            OpusCheckboxRow(
-                title = "Author",
-                checked = sortMode == LibrarySortMode.AUTHOR,
-                onCheckedChange = { onSortModeChange(LibrarySortMode.AUTHOR) },
-                modifier = Modifier.testTag("sort_opt_author")
+            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+            SheetOptionRow(
+                label = "Author (A-Z)",
+                selected = sortMode == LibrarySortMode.AUTHOR_AZ,
+                onClick = { onSortModeChange(LibrarySortMode.AUTHOR_AZ) },
+                modifier = Modifier.testTag("sort_opt_author_az")
             )
+            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+            SheetOptionRow(
+                label = "Author (Z-A)",
+                selected = sortMode == LibrarySortMode.AUTHOR_ZA,
+                onClick = { onSortModeChange(LibrarySortMode.AUTHOR_ZA) },
+                modifier = Modifier.testTag("sort_opt_author_za")
+            )
+            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+        }
+    }
+}
 
-            Spacer(modifier = Modifier.height(OpusDimensions.SpacingXXLarge))
+@Composable
+private fun SheetOptionRow(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = OpusDimensions.ScreenMarginHorizontal, vertical = OpusDimensions.SpacingMedium),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (icon != null) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = OpusColors.TextPrimaryDark,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(OpusDimensions.SpacingMedium))
+        }
+        Text(
+            text = label,
+            style = OpusTypography.bodyLarge,
+            color = OpusColors.TextPrimaryDark,
+            modifier = Modifier.weight(1f)
+        )
+        if (selected) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = "Selected",
+                tint = OpusColors.HighlightBlue,
+                modifier = Modifier.size(20.dp)
+            )
         }
     }
 }
@@ -684,7 +900,7 @@ private fun BookMenuBottomSheet(
             Spacer(modifier = Modifier.height(OpusDimensions.SpacingStandard))
 
             OpusListRow(
-                title = if (book.progressPercent >= 100f) "Mark as Unread" else "Mark as Read",
+                title = if (book.isRead) "Mark as Unread" else "Mark as Read",
                 onClick = onToggleReadStatus,
                 modifier = Modifier.testTag("book_menu_toggle_read")
             )

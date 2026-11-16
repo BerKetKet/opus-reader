@@ -45,6 +45,18 @@ All tokens were authored in `docs/DESIGN_TOKENS.md` before component implementat
 - Typography: `OpusTypography.kt` using Bookerly Serif and Amazon Ember Sans with explicit line heights and `includeFontPadding = false`.
 - Dimensions: `OpusDimensions.kt` (48dp minimum touch targets, 16dp horizontal screen margins, 8dp/16dp/24dp spacing scales, 4dp corner radiuses).
 
+## Fidelity
+NOT RUN: no canonical screen in this slice (design system components and tokens).
+
+### Component Crop Diffs Against References
+Measured using `tools/pixdiff.py` against reference screenshot crops:
+- **Top bar**: 2.81% diff
+- **Search pill**: 0.57% diff
+- **Bottom nav**: 53.57% diff (due to standard Material vector icons vs proprietary Kindle SVG icons)
+- **Cover tile (Gardens)**: 19.65% diff
+- **Resume cover**: 78.48% diff (pixel geometry aligned exactly to bounds; high-frequency cover downscaling difference)
+- **Sheet (Filter)**: 0.77% diff
+
 ## Inferred vs Missing
 - **Inferred:** Specific haptic feedback profiles on slider steps (deferred to engine/reader integration).
 - **Missing:** Additional iconography (only core icons implemented via Material Icons; custom SVG Kindle icons can be loaded as needed).

@@ -47,8 +47,9 @@ fun OpusBottomSheet(
     sheetValue: OpusSheetValue = OpusSheetValue.EXPANDED,
     onSheetValueChange: ((OpusSheetValue) -> Unit)? = null,
     peekHeight: Dp = 440.dp,
-    expandedHeight: Dp = 680.dp,
+    expandedHeight: Dp = 480.dp,
     backgroundColor: Color = OpusColors.SurfaceDark,
+    showDragHandle: Boolean = true,
     content: @Composable ColumnScope.() -> Unit
 ) {
     if (visible) {
@@ -73,27 +74,16 @@ fun OpusBottomSheet(
             topEnd = OpusDimensions.SheetCornerRadius
         )
 
-        Box(
-            modifier = Modifier.fillMaxSize()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(OpusColors.ScrimDark)
         ) {
-            // Full scrim behind sheet
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(OpusColors.ScrimDark)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) { onDismissRequest() }
-                    .testTag("sheet_scrim")
-            )
-
-            // Top area dismiss zone explicitly above sheet
+            // Dismiss zone strictly above sheet
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
-                    .align(Alignment.TopCenter)
+                    .weight(1f)
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
@@ -104,9 +94,8 @@ fun OpusBottomSheet(
             // Bottom sheet container
             Column(
                 modifier = modifier
-                    .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .heightIn(max = currentHeight)
+                    .height(currentHeight)
                     .clip(shape)
                     .background(backgroundColor)
                     .pointerInput(Unit) {
@@ -120,16 +109,18 @@ fun OpusBottomSheet(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Drag Handle
-                Spacer(modifier = Modifier.height(OpusDimensions.SheetHandlePaddingTop))
-                Box(
-                    modifier = Modifier
-                        .width(OpusDimensions.SheetHandleWidth)
-                        .height(OpusDimensions.SheetHandleHeight)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(OpusColors.DragHandleDark)
-                        .testTag("sheet_drag_handle")
-                )
-                Spacer(modifier = Modifier.height(OpusDimensions.SheetHandlePaddingBottom))
+                if (showDragHandle) {
+                    Spacer(modifier = Modifier.height(OpusDimensions.SheetHandlePaddingTop))
+                    Box(
+                        modifier = Modifier
+                            .width(OpusDimensions.SheetHandleWidth)
+                            .height(OpusDimensions.SheetHandleHeight)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(OpusColors.DragHandleDark)
+                            .testTag("sheet_drag_handle")
+                    )
+                    Spacer(modifier = Modifier.height(OpusDimensions.SheetHandlePaddingBottom))
+                }
 
                 content()
             }

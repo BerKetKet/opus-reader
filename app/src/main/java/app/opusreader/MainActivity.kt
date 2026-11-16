@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    OpusNavHost()
+                    OpusNavHost(deepLinkUri = deepLinkUriState.value)
                 }
             }
         }
@@ -39,7 +39,10 @@ class MainActivity : ComponentActivity() {
     private fun handleIntent(intent: Intent?) {
         val data = intent?.data
         if (data != null && data.scheme == "opus" && data.host == "fixture") {
-            deepLinkUriState.value = data.toString()
+            val uriStr = data.toString()
+            deepLinkUriState.value = uriStr
+            android.util.Log.d("OpusDebug", "MainActivity handleIntent: $uriStr")
+            app.opusreader.debug.DebugFixtureController.handleFixtureDeepLink(this, uriStr)
         }
     }
 }

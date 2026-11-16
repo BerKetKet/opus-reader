@@ -111,6 +111,7 @@ class AppUnitTest {
         override suspend fun updateLibraryViewMode(mode: String) { fakeSettings.update { it.copy(libraryViewMode = mode) } }
         override suspend fun updateLibrarySortMode(mode: String) { fakeSettings.update { it.copy(librarySortMode = mode) } }
         override suspend fun updateLibraryFilter(filter: String) { fakeSettings.update { it.copy(libraryFilter = filter) } }
+        override suspend fun updateGroupBySeries(groupBySeries: Boolean) { fakeSettings.update { it.copy(groupBySeries = groupBySeries) } }
     }
 
     @Before
@@ -287,5 +288,40 @@ class AppUnitTest {
 
         viewModel.onDismissSheet()
         assertNull(viewModel.uiState.value.activeSheet)
+    }
+
+    @Test
+    fun persistence_survivesViewModelRecreation() = testScope.runTest {
+        val vm1 = LibraryViewModel(fakeLibraryRepo, fakeSettingsRepo)
+        advanceUntilIdle()
+
+        vm1.onViewModeChange(LibraryViewMode.LIST)
+        vm1.onSortModeChange(LibrarySortMode.AUTHOR_ZA)
+        vm1.setGroupBySeries(true)
+        advanceUntilIdle()
+
+        // Create new ViewModel with the same repository simulating recreation
+        val vm2 = LibraryViewModel(fakeLibraryRepo, fakeSettingsRepo)
+        advanceUntilIdle()
+
+        assertEquals(LibraryViewMode.LIST, vm2.uiState.value.viewMode)
+        assertEquals(LibrarySortMode.AUTHOR_ZA, vm2.uiState.value.sortMode)
+        assertTrue(vm2.uiState.value.groupBySeries)
+    }
+
+    @Test
+    fun sortMode_authorAzAndZa() = testScope.runTest {
+        val viewModel = LibraryViewModel(fakeLibraryRepo, fakeSettingsRepo)
+        advanceUntilIdle()
+
+        viewModel.onSortModeChange(LibrarySortMode.AUTHOR_AZ)
+        advanceUntilIdle()
+        val authorsAz = viewModel.uiState.value.filteredBooks.map { it.author }
+        assertEquals(listOf("Author X", "Herman Melville", "Jane Austen"), authorsAz)
+
+        viewModel.onSortModeChange(LibrarySortMode.AUTHOR_ZA)
+        advanceUntilIdle()
+        val authorsZa = viewModel.uiState.value.filteredBooks.map { it.author }
+        assertEquals(listOf("Jane Austen", "Herman Melville", "Author X"), authorsZa)
     }
 }

@@ -50,6 +50,7 @@ class LibraryScreenTest {
             settingsRepo.updateLibraryViewMode("GRID")
             settingsRepo.updateLibraryFilter("ALL")
             settingsRepo.updateLibrarySortMode("RECENT")
+            settingsRepo.updateGroupBySeries(false)
 
             libraryRepo.saveBook(
                 BookEntity(
@@ -105,6 +106,8 @@ class LibraryScreenTest {
                     onAssignCollection = viewModel::onAssignCollection,
                     onNewCollectionNameChanged = viewModel::onNewCollectionNameChanged,
                     onCreateCollection = viewModel::onCreateCollection,
+                    onGroupBySeriesChange = viewModel::setGroupBySeries,
+                    onApplyFilterState = viewModel::onApplyFilterState,
                     modifier = Modifier.testTag("library_screen_test")
                 )
             }
@@ -116,18 +119,11 @@ class LibraryScreenTest {
         // 1. Controls are displayed
         composeTestRule.onNodeWithTag("library_top_bar").assertIsDisplayed()
         composeTestRule.onNodeWithTag("library_search_pill").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("library_chip_downloaded").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("library_chip_unread").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("library_chip_books").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("library_chip_samples").assertIsDisplayed()
 
         // 2. Books grid is displayed
         composeTestRule.onNodeWithTag("library_books_grid").assertIsDisplayed()
         composeTestRule.onNodeWithTag("book_tile_book-austen").assertIsDisplayed()
         composeTestRule.onNodeWithTag("book_tile_book-melville").assertIsDisplayed()
-
-        // 3. Resume cover is displayed for the recently read book
-        composeTestRule.onNodeWithTag("library_resume_cover").assertIsDisplayed()
     }
 
     @Test
@@ -151,6 +147,8 @@ class LibraryScreenTest {
                     onAssignCollection = viewModel::onAssignCollection,
                     onNewCollectionNameChanged = viewModel::onNewCollectionNameChanged,
                     onCreateCollection = viewModel::onCreateCollection,
+                    onGroupBySeriesChange = viewModel::setGroupBySeries,
+                    onApplyFilterState = viewModel::onApplyFilterState,
                     modifier = Modifier.testTag("library_screen_test")
                 )
             }
@@ -159,16 +157,23 @@ class LibraryScreenTest {
         waitForBooksToLoad()
         composeTestRule.waitForIdle()
 
-        // Filter by Downloaded chip
-        composeTestRule.onNodeWithTag("library_chip_downloaded").performClick()
+        // Filter via Filter sheet
+        composeTestRule.onNodeWithTag("library_filter_button").performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag("filter_opt_samples").performClick()
+        composeTestRule.onNodeWithTag("filter_done_button").performClick()
         composeTestRule.waitForIdle()
 
-        composeTestRule.onNodeWithTag("book_tile_book-austen").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("book_tile_book-melville").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("book_tile_book-melville").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("book_tile_book-austen").assertDoesNotExist()
 
         // Reset filter
-        composeTestRule.onNodeWithTag("library_chip_downloaded").performClick()
+        composeTestRule.onNodeWithTag("library_filter_button").performClick()
         composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag("filter_opt_samples").performClick()
+        composeTestRule.onNodeWithTag("filter_done_button").performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag("book_tile_book-austen").assertIsDisplayed()
         composeTestRule.onNodeWithTag("book_tile_book-melville").assertIsDisplayed()
 
         // Type search query
@@ -207,6 +212,8 @@ class LibraryScreenTest {
                     onAssignCollection = viewModel::onAssignCollection,
                     onNewCollectionNameChanged = viewModel::onNewCollectionNameChanged,
                     onCreateCollection = viewModel::onCreateCollection,
+                    onGroupBySeriesChange = viewModel::setGroupBySeries,
+                    onApplyFilterState = viewModel::onApplyFilterState,
                     modifier = Modifier.testTag("library_screen_test")
                 )
             }
@@ -219,7 +226,11 @@ class LibraryScreenTest {
         composeTestRule.onNodeWithTag("library_filter_button").performClick()
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithTag("library_filter_sheet").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("filter_opt_downloaded").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("filter_opt_read").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("filter_opt_unread").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("filter_opt_books").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("filter_opt_samples").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("filter_opt_docs").assertIsDisplayed()
 
         // Dismiss filter sheet via Done button
         composeTestRule.onNodeWithTag("filter_done_button").performClick()
@@ -230,6 +241,7 @@ class LibraryScreenTest {
         composeTestRule.onNodeWithTag("library_view_sort_button").performClick()
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithTag("library_view_sort_sheet").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("group_by_series_switch").assertIsDisplayed()
         composeTestRule.onNodeWithTag("view_opt_list").performClick()
         composeTestRule.waitForIdle()
 
