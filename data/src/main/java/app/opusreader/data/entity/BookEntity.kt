@@ -16,5 +16,7 @@ data class BookEntity(
     val isSample: Boolean = false,
     val isNew: Boolean = false,
     val isDownloaded: Boolean = true,
-    val lastReadTimestamp: Long = 0L
+    val collectionName: String? = null,
+    val lastReadTimestamp: Long = 0L,
+    val addedTimestamp: Long = System.currentTimeMillis()
 )
