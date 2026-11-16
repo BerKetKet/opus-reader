@@ -26,7 +26,7 @@ Behaviour first, skin second. Build vertical slices (docs/ROADMAP.md). Each slic
 Debug source set only. Fixtures seed the database and set ViewModel state (open sheet, scroll, theme) through a debug controller and `opus://fixture/<id>` deep links (MainActivity is singleTask). There are no fixture branches in UI code. A liveness check must show the pixels respond to data and font scale.
 
 ## Gates (every slice)
-`tools/gates.sh` runs: assembleDebug, testDebugUnitTest, lintDebug, connectedDebugAndroidTest, `python3 tools/guard.py .` (must print GUARD OK), and the fidelity run for that slice's screens. Never claim done without pasting the gate output into docs/slices/SNN_REPORT.md.
+`tools/gates.sh` runs: assembleDebug, testDebugUnitTest, lintDebug, connectedDebugAndroidTest, `python3 tools/guard.py .` (must print GUARD OK), and the fidelity run for that slice's screens. Never claim done without pasting the gate output into docs/slices/SNN_REPORT.md. Gate evidence is the output of tools/test_summary.py. A report without executed test counts is invalid. Tests must assert behaviour; constant-equality placeholder tests do not count towards a slice.
 
 ## Workflow
 Branch per slice `sNN-name`, small commits with real messages, tag `sNN-done`. No zips of changes. Log choices in docs/DECISIONS.md. Decide instead of asking. If a gate still fails after 3 honest attempts, write the blocker in the slice report and stop.
