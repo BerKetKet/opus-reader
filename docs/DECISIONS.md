@@ -21,3 +21,16 @@
    - Grid spacing calibrated to 46.refPx column gap and 47.refPx row gap for zero-drift 3-column pitch matching 1080x2340 reference.
    - Pinned `ResumeCoverOffsetBottom` to 34.refPx to compensate for 6dp Material3 Card elevation shadow padding, placing resume cover bottom at y=2242.
    - Sheet scrim dismiss zone utilizes full `weight(1f)` area strictly above the sheet container to prevent occlusion or interference with child content taps.
+
+## S04 Engine API and Fake Decisions
+
+1. **Module Independence (Hard Rule)**:
+   - `:engine` has zero dependencies on `:data` and zero dependencies on `:app`.
+   - Built a self-contained `EpubExtractor` within `app.opusreader.engine.internal` using standard Java `DocumentBuilderFactory` DOM parsing and `java.util.zip.ZipFile`, avoiding Android-specific XML parsers that break JVM contract testing.
+
+2. **Deterministic Pagination & Hit Testing**:
+   - `FakeReaderEngine` segments real spine text into individual word tokens, measuring width and line heights with Bookerly typography scales.
+   - Each word is tracked with an exact `WordBox` containing bounding `RectF` and `Locator(spineIndex, charOffset)`.
+   - `hitTest(page, x, y)` implements dual-stage detection: exact bounding box intersection with character interpolation, falling back to proximity within 100px.
+   - Page navigation (`pageAt`, `next`, `previous`) preserves exact `Locator` across engine recreation.
+
