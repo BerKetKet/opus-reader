@@ -12,17 +12,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import app.opusreader.OpusApplication
 import app.opusreader.design.component.OpusBottomNavBar
 import app.opusreader.design.component.OpusNavItem
 import app.opusreader.feature.home.HomeScreen
 import app.opusreader.feature.library.LibraryScreen
+import app.opusreader.feature.library.LibraryViewModel
 import app.opusreader.feature.more.MoreScreen
 
 sealed class Screen(val route: String, val label: String, val tag: String, val icon: ImageVector, val id: Int) {
@@ -88,9 +93,33 @@ fun OpusNavHost(
                 )
             }
             composable(Screen.Library.route) {
+                val context = LocalContext.current
+                val app = context.applicationContext as OpusApplication
+                val libraryViewModel: LibraryViewModel = viewModel(
+                    factory = LibraryViewModel.provideFactory(
+                        app.container.libraryRepository,
+                        app.container.settingsRepository
+                    )
+                )
+                val uiState by libraryViewModel.uiState.collectAsStateWithLifecycle()
+
                 LibraryScreen(
-                    modifier = Modifier.testTag("screen_library"),
-                    onOpenBook = { _ -> }
+                    uiState = uiState,
+                    onOpenBook = { },
+                    onSearchQueryChange = libraryViewModel::onSearchQueryChange,
+                    onFilterChange = libraryViewModel::onFilterChange,
+                    onViewModeChange = libraryViewModel::onViewModeChange,
+                    onSortModeChange = libraryViewModel::onSortModeChange,
+                    onSelectCollection = libraryViewModel::onSelectCollection,
+                    onOpenSheet = libraryViewModel::onOpenSheet,
+                    onDismissSheet = libraryViewModel::onDismissSheet,
+                    onToggleReadStatus = libraryViewModel::onToggleReadStatus,
+                    onToggleDownload = libraryViewModel::onToggleDownload,
+                    onDeleteBook = libraryViewModel::onDeleteBook,
+                    onAssignCollection = libraryViewModel::onAssignCollection,
+                    onNewCollectionNameChanged = libraryViewModel::onNewCollectionNameChanged,
+                    onCreateCollection = libraryViewModel::onCreateCollection,
+                    modifier = Modifier.testTag("screen_library")
                 )
             }
             composable(Screen.More.route) {
