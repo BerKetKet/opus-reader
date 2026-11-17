@@ -188,6 +188,7 @@ fun OpusNavHost(
 
                 ReaderScreen(
                     uiState = readerUiState,
+                    engine = app.container.readerEngine,
                     onBackClick = { navController.popBackStack() },
                     onPreviousPage = readerViewModel::onPreviousPage,
                     onNextPage = readerViewModel::onNextPage,
@@ -197,7 +198,9 @@ fun OpusNavHost(
                     onScrubberCommit = readerViewModel::onScrubberCommit,
                     onOpenSheet = readerViewModel::onOpenSheet,
                     onDismissSheet = readerViewModel::onDismissSheet,
-                    onJumpToToc = readerViewModel::onJumpToToc
+                    onJumpToToc = readerViewModel::onJumpToToc,
+                    onToggleThumbnails = readerViewModel::onToggleThumbnails,
+                    onWordLongPress = readerViewModel::onWordLongPress
                 )
             }
         }

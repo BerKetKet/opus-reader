@@ -28,6 +28,7 @@ data class ReaderUiState(
     val currentPage: Page? = null,
     val progress: Progress = Progress(current = 1, total = 1, percent = 0f),
     val isChromeVisible: Boolean = false,
+    val isThumbnailsVisible: Boolean = false,
     val isBookmarked: Boolean = false,
     val theme: PageTheme = PageTheme(textColor = 0xFFE0E0E0.toInt(), backgroundColor = 0xFF000000.toInt()),
     val activeSheet: ActiveReaderSheet? = null,

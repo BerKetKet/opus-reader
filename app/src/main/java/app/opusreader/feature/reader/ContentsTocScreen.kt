@@ -27,11 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import app.opusreader.design.theme.BookerlyFontFamily
 import app.opusreader.design.theme.OpusColors
 import app.opusreader.design.theme.OpusDimensions
+import app.opusreader.design.theme.OpusTypography
 import app.opusreader.engine.model.Locator
 import app.opusreader.engine.model.TocEntry
 
@@ -64,17 +62,14 @@ fun ContentsTocScreen(
                 Text(
                     text = bookTitle,
                     color = OpusColors.ReaderTocTextPrimary,
-                    fontSize = 18.sp,
-                    fontFamily = BookerlyFontFamily,
-                    fontWeight = FontWeight.Bold,
+                    style = OpusTypography.titleLarge,
                     maxLines = 1,
                     modifier = Modifier.testTag("contents_title")
                 )
                 Text(
                     text = bookAuthor,
                     color = OpusColors.ReaderTocTextSecondary,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Normal,
+                    style = OpusTypography.bodyMedium,
                     maxLines = 1,
                     modifier = Modifier.padding(top = OpusDimensions.SpacingSmall).testTag("contents_author")
                 )
@@ -95,12 +90,12 @@ fun ContentsTocScreen(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Close",
                     tint = OpusColors.ReaderTocTextPrimary,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(OpusDimensions.IconMedium)
                 )
             }
         }
 
-        HorizontalDivider(color = OpusColors.ReaderTocDivider, thickness = 1.dp)
+        HorizontalDivider(color = OpusColors.ReaderTocDivider, thickness = OpusDimensions.DividerThickness)
 
         // Chapters List
         LazyColumn(
@@ -136,8 +131,8 @@ fun ContentsTocScreen(
                     if (isCurrent) {
                         Box(
                             modifier = Modifier
-                                .width(4.dp)
-                                .height(24.dp)
+                                .width(OpusDimensions.ReaderTocIndicatorWidth)
+                                .height(OpusDimensions.ReaderTocIndicatorHeight)
                                 .background(Color.White)
                                 .align(Alignment.CenterStart)
                         )
@@ -146,8 +141,7 @@ fun ContentsTocScreen(
                     Text(
                         text = item.title,
                         color = OpusColors.ReaderTocTextPrimary,
-                        fontSize = 15.sp,
-                        fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal,
+                        style = if (isCurrent) OpusTypography.bodyLarge.copy(fontWeight = FontWeight.Bold) else OpusTypography.bodyLarge,
                         maxLines = if (index == 1) 2 else 1,
                         modifier = Modifier
                             .padding(start = startPadding, end = OpusDimensions.ReaderContentsIndentLevel0)

@@ -174,6 +174,14 @@ class ReaderViewModel(
         _uiState.update { it.copy(activeSheet = null) }
     }
 
+    fun onToggleThumbnails() {
+        _uiState.update { it.copy(isThumbnailsVisible = !it.isThumbnailsVisible) }
+    }
+
+    fun onWordLongPress(locator: Locator) {
+        // Handled in S06 for text selection
+    }
+
     fun onJumpToToc(locator: Locator) {
         val targetPage = engine.pageAt(locator)
         val prog = engine.progress(targetPage)

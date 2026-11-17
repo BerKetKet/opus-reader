@@ -27,6 +27,10 @@ object OpusColors {
     val BorderDark = Color(0xFF404040)
     val SearchBorderDark = Color(0xFF8E9194)
 
+    // Switch tokens
+    val SwitchThumbDark = Color(0xFF9E9E9E)
+    val SwitchTrackDark = Color(0xFF333333)
+
     // Accents & highlights
     val AccentBlue = Color(0xFF2491FF)
     val HighlightBlue = Color(0xFF0274E6)
@@ -48,6 +52,9 @@ object OpusColors {
     val ReaderScrubberTrackActive = Color(0xFF29ABE2)
     val ReaderScrubberTrackInactive = Color(0xFFD4D4D4)
     val ReaderDividerDark = Color(0xFF898989)
+    val ReaderCardBorder = Color(0xFF29ABE2)
+    val ReaderPeekBackground = Color(0xFF141414)
+    val ReaderSampleBannerText = Color(0xFFA6A6A6)
 
     // Contents / TOC
     val ReaderTocBackground = Color(0xFF232323)

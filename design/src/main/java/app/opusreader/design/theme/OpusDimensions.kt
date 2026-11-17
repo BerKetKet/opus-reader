@@ -17,6 +17,15 @@ object OpusDimensions {
     val SpacingXLarge: Dp = 24.dp
     val SpacingXXLarge: Dp = 32.dp
 
+    // Corner Radii
+    val CornerRadiusXSmall: Dp = 2.dp
+    val CornerRadiusSmall: Dp = 4.dp
+
+    // Icon sizes
+    val IconSmall: Dp = 20.dp
+    val IconMedium: Dp = 24.dp
+    val IconButtonSmall: Dp = 40.dp
+
     // Measured component dimensions
     val MinTouchTarget: Dp = 48.dp
     val TopBarHeight: Dp = 171.refPx
@@ -25,7 +34,8 @@ object OpusDimensions {
     val DividerToGridSpacing: Dp = 68.refPx
     val DividerToListSpacing: Dp = 33.refPx
     val ScreenMarginHorizontal: Dp = 44.refPx // ~16.8 dp
-    val DividerThickness: Dp = 3.refPx // ~1.14 dp
+    val DividerThickness: Dp = 1.dp
+    val SheetDividerThickness: Dp = 1.dp
 
     // Bottom Navigation Bar
     val BottomNavHeight: Dp = 62.dp // 61dp background + 1dp top border (~163 refPx)
@@ -62,6 +72,9 @@ object OpusDimensions {
     val FilterSheetHeight: Dp = 1200.refPx // ~457.1 dp, top aligns at y=1076
     val ViewSortSheetHeight: Dp = 1518.refPx // ~578.3 dp, top aligns at y=758
     val SheetRowHeight: Dp = 150.refPx // ~57.1 dp row pitch
+    val SheetHeaderHeight: Dp = 108.refPx // ~41.1 dp
+    val SheetSectionHeaderHeight: Dp = 150.refPx // ~57.1 dp
+    val SheetHeaderPaddingTop: Dp = 20.refPx
 
     // Chips
     val ChipHeight: Dp = 36.dp
@@ -85,6 +98,21 @@ object OpusDimensions {
     val ReaderTrackEndX: Dp = 1012.refPx // ~385.5 dp
     val ReaderBottomGestureBarHeight: Dp = 63.refPx // ~24.0 dp
 
+    // Reader Card Mode (D10)
+    val ReaderMarginHorizontal: Dp = 28.dp
+    val ReaderCardWidth: Dp = 680.refPx // ~259.0 dp (x=200..880)
+    val ReaderCardHeight: Dp = 1521.refPx // ~579.4 dp (y=474..1995)
+    val ReaderCardTopY: Dp = 474.refPx // ~180.6 dp
+    val ReaderCardBorderThickness: Dp = 2.dp
+    val ReaderCardGap: Dp = 9.refPx // ~3.4 dp
+    val ReaderCardCornerRadius: Dp = 4.dp
+    val ReaderPeekWidth: Dp = 191.refPx
+    val ReaderSampleBannerTop: Dp = 300.refPx // ~114.3 dp
+    val ReaderSampleBannerHeight: Dp = 48.refPx
+    val ReaderThumbnailsGridPadding: Dp = 16.dp
+    val ReaderThumbnailWidth: Dp = 96.dp
+    val ReaderThumbnailHeight: Dp = 144.dp
+
     // Reader Contents / TOC (measured from D11 reference)
     val ReaderContentsHeaderHeight: Dp = 189.refPx // ~72.0 dp (y=90..279)
     val ReaderContentsTabsHeight: Dp = 134.refPx // ~51.0 dp (y=280..414)
@@ -93,4 +121,6 @@ object OpusDimensions {
     val ReaderContentsMultiLineRowHeight: Dp = 185.refPx // ~70.5 dp (two-line TOC entry)
     val ReaderContentsIndentLevel0: Dp = 87.refPx // ~33.1 dp
     val ReaderContentsIndentLevel1: Dp = 129.refPx // ~49.1 dp
+    val ReaderTocIndicatorWidth: Dp = 4.dp
+    val ReaderTocIndicatorHeight: Dp = 24.dp
 }

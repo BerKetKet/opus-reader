@@ -15,6 +15,10 @@ for m in mains:
             if feat and re.search(r'Spacer\(.*height\(\s*[0-9.]+\.dp', line): add('hard-coded spacer in feature code', p, i, line)
             if feat and re.search(r':\s*\([^)]*\)\s*->\s*Unit\s*=\s*\{\s*\}', line): add('default no-op callback', p, i, line)
             if feat and p.name.endswith('Screen.kt') and re.search(r'^import .*\.data\.', line): add('feature screen imports :data', p, i, line)
+            if feat and re.search(r'Color\(0x', line): add('raw colour in feature code (use a :design token)', p, i, line)
+            if feat and re.search(r'\b(?!0\.)[0-9]+(\.[0-9]+)?\.(dp|sp)\b', line): add('raw dp/sp literal in feature code (use a :design token)', p, i, line)
+            if feat and re.search(r'=\s*\{\s*(/[*/].*)?\}?\s*[,)]?\s*$', line) and re.search(r'\bon[A-Z]\w*\s*=\s*\{\s*(/\*.*\*/)?\s*\}', line): add('no-op callback lambda', p, i, line)
+            if feat and re.search(r'joinToString.*\.words|\.words.*joinToString', line): add('page text rendered outside the engine', p, i, line)
     for p in (m / 'res').rglob('*') if (m / 'res').exists() else []:
         if p.suffix.lower() in ('.png', '.webp', '.jpg', '.jpeg') and 'mipmap' not in str(p): add('raster image in main/res', p)
 pat = re.compile(r'kindle\.com|protonmail|gebregiorgis|bereket|@gmail\.com', re.I)

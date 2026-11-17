@@ -8,9 +8,19 @@ ap.add_argument('--mask', action='append', default=[], help='x0,y0,x1,y1 in px; 
 ap.add_argument('--tol', type=int, default=8)
 ap.add_argument('--status', type=int, default=90, help='top px to mask (status bar)')
 ap.add_argument('--bottom', type=int, default=0, help='bottom px to mask (gesture bar)')
+ap.add_argument('--inset-shift', type=int, default=0, help='px to shift app content below status bar to compensate for hardware status bar difference')
 a = ap.parse_args()
 r, p = load(a.ref), load(a.app)
 assert r.shape == p.shape, f'size mismatch {r.shape} vs {p.shape}'
+
+if a.inset_shift:
+    p_shifted = p.copy()
+    shift = a.inset_shift
+    if shift > 0:
+        p_shifted[a.status:, :] = p[a.status - shift : p.shape[0] - shift, :]
+    elif shift < 0:
+        p_shifted[a.status : p.shape[0] + shift, :] = p[a.status - shift :, :]
+    p = p_shifted
 keep = np.ones(r.shape[:2], bool)
 keep[:a.status] = False
 if a.bottom: keep[-a.bottom:] = False

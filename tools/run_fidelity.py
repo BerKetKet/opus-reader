@@ -150,7 +150,7 @@ def run_scroll_test(sid):
     
     return top_img.exists() and mid_img.exists() and end_img.exists()
 
-def run_screen(sid, ref_rel_path, masks_dict, is_scrollable=False, bottom=48, status=90, skip_capture=False):
+def run_screen(sid, ref_rel_path, masks_dict, is_scrollable=False, bottom=48, status=90, inset_shift=7, skip_capture=False):
     ref_path = ROOT / ref_rel_path
     if not ref_path.exists():
         return dict(id=sid, status="MISSING_REF", pct_bad=100.0, worst_offset=999, liveness="N/A", scroll="N/A", notes=f"Ref missing: {ref_rel_path}")
@@ -181,7 +181,8 @@ def run_screen(sid, ref_rel_path, masks_dict, is_scrollable=False, bottom=48, st
         str(app_img),
         str(out_prefix),
         f"--status={status}",
-        f"--bottom={bottom}"
+        f"--bottom={bottom}",
+        f"--inset-shift={inset_shift}"
     ]
     for m in masks_dict.get(sid, []):
         cmd.extend(["--mask", m])
@@ -287,6 +288,7 @@ def main():
     ap.add_argument("--skip-capture", action="store_true", help="Diff existing captures without invoking adb")
     ap.add_argument("--status", type=int, default=90)
     ap.add_argument("--bottom", type=int, default=48)
+    ap.add_argument("--inset-shift", type=int, default=7, help="Status bar inset difference in px (default: 7)")
     args = ap.parse_args()
 
     masks_dict = load_masks()
@@ -302,7 +304,7 @@ def main():
         sid, name, ref_file, notes = item[0], item[1], item[2], item[3]
         is_scrollable = item[4] if len(item) > 4 else False
         print(f"Running {sid}: {name} against {ref_file}...")
-        res = run_screen(sid, ref_file, masks_dict, is_scrollable=is_scrollable, bottom=args.bottom, status=args.status, skip_capture=args.skip_capture)
+        res = run_screen(sid, ref_file, masks_dict, is_scrollable=is_scrollable, bottom=args.bottom, status=args.status, inset_shift=args.inset_shift, skip_capture=args.skip_capture)
         res["name"] = name
         res["ref"] = ref_file
         print(f"  Result: {res['status']} | {res['pct_bad']}% bad | offset {res['worst_offset']} px | liveness: {res['liveness']}")
