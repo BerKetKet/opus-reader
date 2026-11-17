@@ -18,6 +18,9 @@ interface AnnotationDao {
     @Query("DELETE FROM annotations WHERE id = :id")
     suspend fun deleteAnnotationById(id: String)
 
+    @Query("UPDATE annotations SET isFavorite = :isFavorite WHERE id = :id")
+    suspend fun updateFavorite(id: String, isFavorite: Boolean)
+
     @Query("DELETE FROM annotations WHERE bookId = :bookId")
     suspend fun deleteAnnotationsForBook(bookId: String)
 }

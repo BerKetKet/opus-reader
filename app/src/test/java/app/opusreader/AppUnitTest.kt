@@ -97,6 +97,7 @@ class AppUnitTest {
         override fun getAnnotations(bookId: String): Flow<List<AnnotationEntity>> = flowOf(emptyList())
         override suspend fun addAnnotation(annotation: AnnotationEntity) { }
         override suspend fun deleteAnnotation(id: String) { }
+        override suspend fun toggleAnnotationFavorite(id: String, isFavorite: Boolean) { }
         override fun createImporter(context: Context): EpubImporter = error("Not needed for test")
     }
 

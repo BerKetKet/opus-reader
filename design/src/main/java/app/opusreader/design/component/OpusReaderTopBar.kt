@@ -34,6 +34,7 @@ fun OpusReaderTopBar(
     onBackClick: () -> Unit,
     onContentsClick: () -> Unit,
     onSearchClick: () -> Unit,
+    onNotebookClick: () -> Unit,
     onBookmarkClick: () -> Unit,
     onDisplaySettingsClick: () -> Unit,
     onOverflowClick: () -> Unit,
@@ -44,7 +45,7 @@ fun OpusReaderTopBar(
             .fillMaxWidth()
             .height(OpusDimensions.ReaderTopBarHeight)
             .background(OpusColors.ReaderChromeTopDark)
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = OpusDimensions.SpacingSmall)
             .testTag("reader_top_bar"),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -64,11 +65,11 @@ fun OpusReaderTopBar(
                 painter = painterResource(R.drawable.ic_reader_back),
                 contentDescription = "Back",
                 tint = Color.White,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(OpusDimensions.IconMedium)
             )
         }
 
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(OpusDimensions.SpacingStandard))
 
         // Table of Contents
         Box(
@@ -86,7 +87,7 @@ fun OpusReaderTopBar(
                 painter = painterResource(R.drawable.ic_reader_toc),
                 contentDescription = "Contents",
                 tint = Color.White,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(OpusDimensions.IconMedium)
             )
         }
 
@@ -108,7 +109,27 @@ fun OpusReaderTopBar(
                 painter = painterResource(R.drawable.ic_reader_search),
                 contentDescription = "Search",
                 tint = Color.White,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(OpusDimensions.IconMedium)
+            )
+        }
+
+        // Notebook (Annotations)
+        Box(
+            modifier = Modifier
+                .size(OpusDimensions.MinTouchTarget)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onNotebookClick
+                )
+                .testTag("reader_notebook_button"),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_reader_notebook),
+                contentDescription = "Notebook",
+                tint = Color.White,
+                modifier = Modifier.size(OpusDimensions.IconMedium)
             )
         }
 
@@ -128,7 +149,7 @@ fun OpusReaderTopBar(
                 imageVector = if (isBookmarked) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
                 contentDescription = if (isBookmarked) "Remove Bookmark" else "Add Bookmark",
                 tint = if (isBookmarked) OpusColors.BookmarkRed else Color.White,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(OpusDimensions.IconMedium)
             )
         }
 
@@ -148,7 +169,7 @@ fun OpusReaderTopBar(
                 painter = painterResource(R.drawable.ic_reader_aa),
                 contentDescription = "Display Settings",
                 tint = Color.White,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(OpusDimensions.IconMedium)
             )
         }
 
@@ -168,7 +189,7 @@ fun OpusReaderTopBar(
                 painter = painterResource(R.drawable.ic_reader_overflow),
                 contentDescription = "More Options",
                 tint = Color.White,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(OpusDimensions.IconMedium)
             )
         }
     }

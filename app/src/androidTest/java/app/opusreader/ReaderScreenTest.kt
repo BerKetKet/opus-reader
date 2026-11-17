@@ -15,12 +15,18 @@ import app.opusreader.design.theme.OpusTheme
 import app.opusreader.engine.FakeReaderEngine
 import app.opusreader.engine.model.BookSource
 import app.opusreader.engine.model.Locator
+import app.opusreader.engine.model.LocatorRange
 import app.opusreader.engine.model.Page
 import app.opusreader.engine.model.Progress
 import app.opusreader.engine.model.ReaderSettings
+import app.opusreader.engine.model.SearchHit
 import app.opusreader.engine.model.TocEntry
 import app.opusreader.engine.model.WordBox
 import app.opusreader.feature.reader.ActiveReaderSheet
+import app.opusreader.feature.reader.AnnotationFilter
+import app.opusreader.feature.reader.AnnotationSort
+import app.opusreader.feature.reader.AnnotationUiModel
+import app.opusreader.feature.reader.AnnotationUiType
 import app.opusreader.feature.reader.ReaderBookUiModel
 import app.opusreader.feature.reader.ReaderScreen
 import app.opusreader.feature.reader.ReaderUiState
@@ -59,6 +65,47 @@ class ReaderScreenTest {
     private val sampleToc = listOf(
         TocEntry("Preface to Gardens of the Moon — redux", Locator(0, 0), level = 0),
         TocEntry("Chapter One", Locator(1, 0), level = 1)
+    )
+
+    private val sampleAnnotations = listOf(
+        AnnotationUiModel(
+            id = "annot_1",
+            bookId = "id_1",
+            spineIndex = 0,
+            startOffset = 0,
+            endOffset = 6,
+            selectedText = "Ganoes",
+            colorHex = "#F9E054",
+            type = AnnotationUiType.HIGHLIGHT
+        ),
+        AnnotationUiModel(
+            id = "annot_2",
+            bookId = "id_1",
+            spineIndex = 0,
+            startOffset = 7,
+            endOffset = 12,
+            selectedText = "asked",
+            noteText = "Ganoes questioning authority",
+            colorHex = "#68B6EF",
+            type = AnnotationUiType.NOTE
+        ),
+        AnnotationUiModel(
+            id = "annot_3",
+            bookId = "id_1",
+            spineIndex = 0,
+            startOffset = 13,
+            endOffset = 20,
+            selectedText = "boldly.",
+            isFavorite = true,
+            type = AnnotationUiType.BOOKMARK
+        )
+    )
+
+    private val sampleHits = listOf(
+        SearchHit(
+            locator = Locator(0, 0),
+            snippet = "...Ganoes asked boldly..."
+        )
     )
 
     @Before
@@ -109,7 +156,23 @@ class ReaderScreenTest {
                     onDismissSheet = {},
                     onJumpToToc = {},
                     onToggleThumbnails = {},
-                    onWordLongPress = {}
+                    onWordLongPress = {},
+                    onUpdateSelectionRange = {},
+                    onClearSelection = {},
+                    onAnnotationClick = {},
+                    onCreateHighlight = {},
+                    onChangeHighlightColor = { _, _ -> },
+                    onDeleteAnnotation = {},
+                    onOpenNoteEditor = {},
+                    onDismissNoteEditor = {},
+                    onSaveNote = { _, _ -> },
+                    onToggleFavorite = {},
+                    onSearchQueryChange = {},
+                    onSelectSearchHit = {},
+                    onNextSearchHit = {},
+                    onPreviousSearchHit = {},
+                    onSetAnnotationFilter = {},
+                    onSetAnnotationSort = {}
                 )
             }
         }
@@ -155,7 +218,23 @@ class ReaderScreenTest {
                     onDismissSheet = {},
                     onJumpToToc = {},
                     onToggleThumbnails = {},
-                    onWordLongPress = {}
+                    onWordLongPress = {},
+                    onUpdateSelectionRange = {},
+                    onClearSelection = {},
+                    onAnnotationClick = {},
+                    onCreateHighlight = {},
+                    onChangeHighlightColor = { _, _ -> },
+                    onDeleteAnnotation = {},
+                    onOpenNoteEditor = {},
+                    onDismissNoteEditor = {},
+                    onSaveNote = { _, _ -> },
+                    onToggleFavorite = {},
+                    onSearchQueryChange = {},
+                    onSelectSearchHit = {},
+                    onNextSearchHit = {},
+                    onPreviousSearchHit = {},
+                    onSetAnnotationFilter = {},
+                    onSetAnnotationSort = {}
                 )
             }
         }
@@ -201,7 +280,23 @@ class ReaderScreenTest {
                     onDismissSheet = {},
                     onJumpToToc = {},
                     onToggleThumbnails = {},
-                    onWordLongPress = {}
+                    onWordLongPress = {},
+                    onUpdateSelectionRange = {},
+                    onClearSelection = {},
+                    onAnnotationClick = {},
+                    onCreateHighlight = {},
+                    onChangeHighlightColor = { _, _ -> },
+                    onDeleteAnnotation = {},
+                    onOpenNoteEditor = {},
+                    onDismissNoteEditor = {},
+                    onSaveNote = { _, _ -> },
+                    onToggleFavorite = {},
+                    onSearchQueryChange = {},
+                    onSelectSearchHit = {},
+                    onNextSearchHit = {},
+                    onPreviousSearchHit = {},
+                    onSetAnnotationFilter = {},
+                    onSetAnnotationSort = {}
                 )
             }
         }
@@ -249,7 +344,23 @@ class ReaderScreenTest {
                     onDismissSheet = {},
                     onJumpToToc = { jumpedLocator = it },
                     onToggleThumbnails = {},
-                    onWordLongPress = {}
+                    onWordLongPress = {},
+                    onUpdateSelectionRange = {},
+                    onClearSelection = {},
+                    onAnnotationClick = {},
+                    onCreateHighlight = {},
+                    onChangeHighlightColor = { _, _ -> },
+                    onDeleteAnnotation = {},
+                    onOpenNoteEditor = {},
+                    onDismissNoteEditor = {},
+                    onSaveNote = { _, _ -> },
+                    onToggleFavorite = {},
+                    onSearchQueryChange = {},
+                    onSelectSearchHit = {},
+                    onNextSearchHit = {},
+                    onPreviousSearchHit = {},
+                    onSetAnnotationFilter = {},
+                    onSetAnnotationSort = {}
                 )
             }
         }
@@ -295,7 +406,23 @@ class ReaderScreenTest {
                     onDismissSheet = {},
                     onJumpToToc = {},
                     onToggleThumbnails = {},
-                    onWordLongPress = {}
+                    onWordLongPress = {},
+                    onUpdateSelectionRange = {},
+                    onClearSelection = {},
+                    onAnnotationClick = {},
+                    onCreateHighlight = {},
+                    onChangeHighlightColor = { _, _ -> },
+                    onDeleteAnnotation = {},
+                    onOpenNoteEditor = {},
+                    onDismissNoteEditor = {},
+                    onSaveNote = { _, _ -> },
+                    onToggleFavorite = {},
+                    onSearchQueryChange = {},
+                    onSelectSearchHit = {},
+                    onNextSearchHit = {},
+                    onPreviousSearchHit = {},
+                    onSetAnnotationFilter = {},
+                    onSetAnnotationSort = {}
                 )
             }
         }
@@ -349,7 +476,23 @@ class ReaderScreenTest {
                     onDismissSheet = {},
                     onJumpToToc = {},
                     onToggleThumbnails = {},
-                    onWordLongPress = { loc -> receivedLocator = loc }
+                    onWordLongPress = { loc -> receivedLocator = loc },
+                    onUpdateSelectionRange = {},
+                    onClearSelection = {},
+                    onAnnotationClick = {},
+                    onCreateHighlight = {},
+                    onChangeHighlightColor = { _, _ -> },
+                    onDeleteAnnotation = {},
+                    onOpenNoteEditor = {},
+                    onDismissNoteEditor = {},
+                    onSaveNote = { _, _ -> },
+                    onToggleFavorite = {},
+                    onSearchQueryChange = {},
+                    onSelectSearchHit = {},
+                    onNextSearchHit = {},
+                    onPreviousSearchHit = {},
+                    onSetAnnotationFilter = {},
+                    onSetAnnotationSort = {}
                 )
             }
         }
@@ -366,5 +509,234 @@ class ReaderScreenTest {
             receivedLocator!!.charOffset >= targetWord.start.charOffset &&
                 receivedLocator!!.charOffset <= targetWord.end.charOffset
         )
+    }
+
+    @Test
+    fun selection_toolbarAppearsAndCreatesHighlight() {
+        var createdColor: String? = null
+        val state = ReaderUiState(
+            book = ReaderBookUiModel("id_1", "The Complete Malazan", "Steven Erikson", ""),
+            currentPage = samplePage,
+            isChromeVisible = false,
+            selectedRange = LocatorRange(Locator(0, 0), Locator(0, 6)),
+            selectedText = "Ganoes",
+            isLoading = false
+        )
+
+        composeTestRule.setContent {
+            OpusTheme {
+                ReaderScreen(
+                    uiState = state,
+                    engine = fakeEngine,
+                    onBackClick = {},
+                    onPreviousPage = {},
+                    onNextPage = {},
+                    onToggleChrome = {},
+                    onToggleBookmark = {},
+                    onScrubberChange = {},
+                    onScrubberCommit = {},
+                    onOpenSheet = {},
+                    onDismissSheet = {},
+                    onJumpToToc = {},
+                    onToggleThumbnails = {},
+                    onWordLongPress = {},
+                    onUpdateSelectionRange = {},
+                    onClearSelection = {},
+                    onAnnotationClick = {},
+                    onCreateHighlight = { createdColor = it },
+                    onChangeHighlightColor = { _, _ -> },
+                    onDeleteAnnotation = {},
+                    onOpenNoteEditor = {},
+                    onDismissNoteEditor = {},
+                    onSaveNote = { _, _ -> },
+                    onToggleFavorite = {},
+                    onSearchQueryChange = {},
+                    onSelectSearchHit = {},
+                    onNextSearchHit = {},
+                    onPreviousSearchHit = {},
+                    onSetAnnotationFilter = {},
+                    onSetAnnotationSort = {}
+                )
+            }
+        }
+
+        // Toolbar is displayed
+        composeTestRule.onNodeWithTag("selection_toolbar").assertIsDisplayed()
+
+        // Click yellow swatch
+        composeTestRule.onNodeWithTag("swatch_F9E054").assertIsDisplayed().performClick()
+        assertEquals("#F9E054", createdColor)
+    }
+
+    @Test
+    fun searchScreen_rendersResultsAndNavigatesToHit() {
+        var selectedHit: Int? = null
+        val state = ReaderUiState(
+            book = ReaderBookUiModel("id_1", "The Complete Malazan", "Steven Erikson", ""),
+            currentPage = samplePage,
+            isChromeVisible = false,
+            activeSheet = ActiveReaderSheet.SEARCH,
+            searchQuery = "Ganoes",
+            searchResults = sampleHits,
+            isLoading = false
+        )
+
+        composeTestRule.setContent {
+            OpusTheme {
+                ReaderScreen(
+                    uiState = state,
+                    engine = fakeEngine,
+                    onBackClick = {},
+                    onPreviousPage = {},
+                    onNextPage = {},
+                    onToggleChrome = {},
+                    onToggleBookmark = {},
+                    onScrubberChange = {},
+                    onScrubberCommit = {},
+                    onOpenSheet = {},
+                    onDismissSheet = {},
+                    onJumpToToc = {},
+                    onToggleThumbnails = {},
+                    onWordLongPress = {},
+                    onUpdateSelectionRange = {},
+                    onClearSelection = {},
+                    onAnnotationClick = {},
+                    onCreateHighlight = {},
+                    onChangeHighlightColor = { _, _ -> },
+                    onDeleteAnnotation = {},
+                    onOpenNoteEditor = {},
+                    onDismissNoteEditor = {},
+                    onSaveNote = { _, _ -> },
+                    onToggleFavorite = {},
+                    onSearchQueryChange = {},
+                    onSelectSearchHit = { selectedHit = it },
+                    onNextSearchHit = {},
+                    onPreviousSearchHit = {},
+                    onSetAnnotationFilter = {},
+                    onSetAnnotationSort = {}
+                )
+            }
+        }
+
+        // Verify search screen
+        composeTestRule.onNodeWithTag("reader_search_screen").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("search_hit_0")
+            .assertIsDisplayed()
+            .assertTextContains("Location 0")
+            .performClick()
+
+        assertEquals(0, selectedHit)
+    }
+
+    @Test
+    fun annotationsScreen_rendersAnnotationsList() {
+        var jumpedLocator: Locator? = null
+        val state = ReaderUiState(
+            book = ReaderBookUiModel("id_1", "The Complete Malazan", "Steven Erikson", ""),
+            currentPage = samplePage,
+            isChromeVisible = false,
+            activeSheet = ActiveReaderSheet.ANNOTATIONS,
+            annotations = sampleAnnotations,
+            isLoading = false
+        )
+
+        composeTestRule.setContent {
+            OpusTheme {
+                ReaderScreen(
+                    uiState = state,
+                    engine = fakeEngine,
+                    onBackClick = {},
+                    onPreviousPage = {},
+                    onNextPage = {},
+                    onToggleChrome = {},
+                    onToggleBookmark = {},
+                    onScrubberChange = {},
+                    onScrubberCommit = {},
+                    onOpenSheet = {},
+                    onDismissSheet = {},
+                    onJumpToToc = { jumpedLocator = it },
+                    onToggleThumbnails = {},
+                    onWordLongPress = {},
+                    onUpdateSelectionRange = {},
+                    onClearSelection = {},
+                    onAnnotationClick = {},
+                    onCreateHighlight = {},
+                    onChangeHighlightColor = { _, _ -> },
+                    onDeleteAnnotation = {},
+                    onOpenNoteEditor = {},
+                    onDismissNoteEditor = {},
+                    onSaveNote = { _, _ -> },
+                    onToggleFavorite = {},
+                    onSearchQueryChange = {},
+                    onSelectSearchHit = {},
+                    onNextSearchHit = {},
+                    onPreviousSearchHit = {},
+                    onSetAnnotationFilter = {},
+                    onSetAnnotationSort = {}
+                )
+            }
+        }
+
+        // Verify annotations screen
+        composeTestRule.onNodeWithTag("annotations_screen").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("annotation_item_annot_1")
+            .assertIsDisplayed()
+            .assertTextContains("Ganoes")
+            .performClick()
+
+        assertEquals(Locator(0, 0), jumpedLocator)
+    }
+
+    @Test
+    fun annotationsFilterAndSortSheets_renderAndTriggerCallbacks() {
+        var selectedFilter: AnnotationFilter? = null
+        val filterState = ReaderUiState(
+            book = ReaderBookUiModel("id_1", "The Complete Malazan", "Steven Erikson", ""),
+            currentPage = samplePage,
+            activeSheet = ActiveReaderSheet.ANNOTATIONS_FILTER,
+            annotations = sampleAnnotations,
+            isLoading = false
+        )
+
+        composeTestRule.setContent {
+            OpusTheme {
+                ReaderScreen(
+                    uiState = filterState,
+                    engine = fakeEngine,
+                    onBackClick = {},
+                    onPreviousPage = {},
+                    onNextPage = {},
+                    onToggleChrome = {},
+                    onToggleBookmark = {},
+                    onScrubberChange = {},
+                    onScrubberCommit = {},
+                    onOpenSheet = {},
+                    onDismissSheet = {},
+                    onJumpToToc = {},
+                    onToggleThumbnails = {},
+                    onWordLongPress = {},
+                    onUpdateSelectionRange = {},
+                    onClearSelection = {},
+                    onAnnotationClick = {},
+                    onCreateHighlight = {},
+                    onChangeHighlightColor = { _, _ -> },
+                    onDeleteAnnotation = {},
+                    onOpenNoteEditor = {},
+                    onDismissNoteEditor = {},
+                    onSaveNote = { _, _ -> },
+                    onToggleFavorite = {},
+                    onSearchQueryChange = {},
+                    onSelectSearchHit = {},
+                    onNextSearchHit = {},
+                    onPreviousSearchHit = {},
+                    onSetAnnotationFilter = { selectedFilter = it },
+                    onSetAnnotationSort = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag("annotations_filter_sheet").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("filter_opt_highlights").assertIsDisplayed().performClick()
+        assertEquals(AnnotationFilter.HIGHLIGHTS, selectedFilter)
     }
 }

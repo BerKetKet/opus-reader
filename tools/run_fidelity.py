@@ -284,6 +284,7 @@ def main():
 
     ap = argparse.ArgumentParser()
     ap.add_argument("--id", help="Single screen id to test (e.g. D01)")
+    ap.add_argument("--ids", nargs="+", help="Multiple screen ids to test (e.g. D12 D13 D14 D15 D16)")
     ap.add_argument("--all", action="store_true", help="Run all canonical screens")
     ap.add_argument("--skip-capture", action="store_true", help="Diff existing captures without invoking adb")
     ap.add_argument("--status", type=int, default=90)
@@ -293,7 +294,10 @@ def main():
 
     masks_dict = load_masks()
     screens_to_run = CANONICAL_SCREENS
-    if args.id:
+    if args.ids:
+        target_ids = [i.upper() for i in args.ids]
+        screens_to_run = [s for s in CANONICAL_SCREENS if s[0].upper() in target_ids]
+    elif args.id:
         screens_to_run = [s for s in CANONICAL_SCREENS if s[0].upper() == args.id.upper()]
         if not screens_to_run:
             print(f"Unknown id: {args.id}")

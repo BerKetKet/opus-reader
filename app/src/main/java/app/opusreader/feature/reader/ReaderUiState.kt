@@ -1,16 +1,56 @@
 package app.opusreader.feature.reader
 
+import app.opusreader.engine.model.LocatorRange
 import app.opusreader.engine.model.Page
 import app.opusreader.engine.model.PageTheme
 import app.opusreader.engine.model.Progress
+import app.opusreader.engine.model.SearchHit
 import app.opusreader.engine.model.TocEntry
 
 enum class ActiveReaderSheet {
     CONTENTS,
     SEARCH,
     SETTINGS,
-    OVERFLOW
+    OVERFLOW,
+    ANNOTATIONS,
+    ANNOTATIONS_FILTER,
+    ANNOTATIONS_SORT,
+    ANNOTATIONS_SHARE
 }
+
+enum class AnnotationFilter {
+    ALL,
+    HIGHLIGHTS,
+    NOTES,
+    BOOKMARKS,
+    STARRED
+}
+
+enum class AnnotationSort {
+    LOCATION_ASC,
+    LOCATION_DESC,
+    DATE_MODIFIED
+}
+
+enum class AnnotationUiType {
+    HIGHLIGHT,
+    NOTE,
+    BOOKMARK
+}
+
+data class AnnotationUiModel(
+    val id: String,
+    val bookId: String,
+    val spineIndex: Int,
+    val startOffset: Int,
+    val endOffset: Int,
+    val selectedText: String,
+    val noteText: String? = null,
+    val colorHex: String = "#FFEB3B",
+    val isFavorite: Boolean = false,
+    val createdTimestamp: Long = System.currentTimeMillis(),
+    val type: AnnotationUiType = AnnotationUiType.HIGHLIGHT
+)
 
 data class ReaderBookUiModel(
     val id: String,
@@ -35,5 +75,17 @@ data class ReaderUiState(
     val tocEntries: List<TocEntry> = emptyList(),
     val scrubberLocation: Int = 1,
     val totalLocations: Int = 1,
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
+    // S06 Selection, Annotations, Search
+    val annotations: List<AnnotationUiModel> = emptyList(),
+    val selectedRange: LocatorRange? = null,
+    val selectedText: String? = null,
+    val activeAnnotation: AnnotationUiModel? = null,
+    val isNoteEditorVisible: Boolean = false,
+    val searchQuery: String = "",
+    val searchResults: List<SearchHit> = emptyList(),
+    val isSearching: Boolean = false,
+    val activeSearchHitIndex: Int = -1,
+    val annotationsFilter: AnnotationFilter = AnnotationFilter.ALL,
+    val annotationsSort: AnnotationSort = AnnotationSort.LOCATION_ASC
 )

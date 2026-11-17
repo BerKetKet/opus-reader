@@ -25,6 +25,7 @@ object OpusDimensions {
     val IconSmall: Dp = 20.dp
     val IconMedium: Dp = 24.dp
     val IconButtonSmall: Dp = 40.dp
+    val IconButtonMedium: Dp = 48.dp
 
     // Measured component dimensions
     val MinTouchTarget: Dp = 48.dp
@@ -123,4 +124,29 @@ object OpusDimensions {
     val ReaderContentsIndentLevel1: Dp = 129.refPx // ~49.1 dp
     val ReaderTocIndicatorWidth: Dp = 4.dp
     val ReaderTocIndicatorHeight: Dp = 24.dp
+
+    // Selection & Toolbar (S06)
+    val SelectionHandleSize: Dp = 16.dp
+    val SelectionHandleTouchSize: Dp = 44.dp
+    val SelectionToolbarHeight: Dp = 48.dp
+    val ColorSwatchSize: Dp = 28.dp
+
+    // Search (D12)
+    val SearchHeaderHeight: Dp = 160.refPx
+    val SearchItemHeight: Dp = 180.refPx
+    val SearchDividerThickness: Dp = 1.dp
+    val SearchFieldUnderlineThickness: Dp = 2.refPx
+    val SearchPromptPaddingTop: Dp = 120.refPx
+
+    // Annotations (D13 - D16)
+    val AnnotationsHeaderHeight: Dp = 160.refPx
+    val AnnotationsFilterChipHeight: Dp = 40.dp
+    val AnnotationsRowPitch: Dp = 220.refPx
+    val AnnotationsFilterSheetHeight: Dp = 1190.refPx
+    val AnnotationsSortSheetHeight: Dp = 965.refPx
+    val AnnotationsShareSheetHeight: Dp = 987.refPx
+    val AnnotationsColorDotSize: Dp = 10.refPx
+    val AnnotationsColorBarWidth: Dp = 6.refPx
+    val AnnotationsColorBarHeight: Dp = 48.refPx
+    val AnnotationsNotePaddingStart: Dp = 22.refPx
 }

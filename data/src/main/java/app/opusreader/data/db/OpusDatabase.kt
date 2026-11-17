@@ -21,7 +21,7 @@ import app.opusreader.data.entity.TocEntryEntity
         TocEntryEntity::class,
         AnnotationEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class OpusDatabase : RoomDatabase() {

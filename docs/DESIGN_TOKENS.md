@@ -78,3 +78,19 @@
 | dimen_sheet_corner_radius | 16dp | docs/reference/05_library-filter-sheet.png |
 | dimen_chip_height | 36dp | docs/reference/02_home.png |
 | dimen_chip_corner_radius | 18dp | docs/reference/02_home.png |
+| color_search_header_dark | #141414 | docs/reference/12_reader-search.png (y 90-250) |
+| color_search_body_dark | #333333 | docs/reference/12_reader-search.png (y 255-1450) |
+| color_search_field_underline | #B8B8B8 | docs/reference/12_reader-search.png (y 226-228) |
+| color_annotations_header_dark | #232323 | docs/reference/13_annotations.png (y 90-250) |
+| color_annotations_filter_bar_dark | #1F1F1F | docs/reference/13_annotations.png (y 250-410) |
+| color_annotations_bg_dark | #000000 | docs/reference/13_annotations.png (y 410-2340) |
+| color_annotations_yellow_bar | #FFD87C | docs/reference/13_annotations.png (y 620-810) |
+| color_annotations_blue_bar | #539AE0 | docs/reference/13_annotations.png (y 1050-1090) |
+| dimen_selection_handle_size | 14.5dp (38px) | docs/INTERACTION_SPEC.md |
+| dimen_selection_toolbar_height | 48dp (126px) | docs/INTERACTION_SPEC.md |
+| dimen_search_header_height | 61dp (160px) | docs/reference/12_reader-search.png (y 90-250) |
+| dimen_annotations_header_height | 61dp (160px) | docs/reference/13_annotations.png (y 90-250) |
+| dimen_annotations_filter_bar_height | 61dp (160px) | docs/reference/13_annotations.png (y 250-410) |
+| dimen_annotations_filter_sheet_height | 509.3dp (1337px) | docs/reference/14_annotations-filter-sheet.png (y 1003-2340) |
+| dimen_annotations_sort_sheet_height | 370.7dp (973px) | docs/reference/15_annotations-sort-sheet.png (y 1367-2340) |
+| dimen_annotations_share_sheet_height | 376dp (987px) | docs/reference/16_annotations-share-via-email.png (y 1353-2340) |

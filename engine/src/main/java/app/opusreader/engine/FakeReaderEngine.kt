@@ -320,6 +320,14 @@ class FakeReaderEngine(
         }.map { it.rect }
     }
 
+    override fun textFor(page: Page, range: LocatorRange): String {
+        if (range.start.spineIndex != page.start.spineIndex) return ""
+        val matchingWords = page.words.filter { word ->
+            word.start.charOffset < range.end.charOffset && word.end.charOffset > range.start.charOffset
+        }
+        return matchingWords.joinToString(" ") { it.text }
+    }
+
     override fun draw(page: Page, canvas: Canvas, theme: PageTheme) {
         canvas.drawColor(theme.backgroundColor)
 

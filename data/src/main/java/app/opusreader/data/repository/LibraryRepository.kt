@@ -31,6 +31,7 @@ interface LibraryRepository {
     fun getAnnotations(bookId: String): Flow<List<AnnotationEntity>>
     suspend fun addAnnotation(annotation: AnnotationEntity)
     suspend fun deleteAnnotation(id: String)
+    suspend fun toggleAnnotationFavorite(id: String, isFavorite: Boolean)
 
     fun createImporter(context: Context): EpubImporter
 
@@ -119,6 +120,9 @@ class DefaultLibraryRepository(
 
     override suspend fun deleteAnnotation(id: String) =
         annotationDao.deleteAnnotationById(id)
+
+    override suspend fun toggleAnnotationFavorite(id: String, isFavorite: Boolean) =
+        annotationDao.updateFavorite(id, isFavorite)
 
     override fun createImporter(context: Context): EpubImporter =
         EpubImporter(context, db)

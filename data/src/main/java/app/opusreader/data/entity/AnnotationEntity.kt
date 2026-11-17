@@ -23,6 +23,7 @@ data class AnnotationEntity(
     val selectedText: String,
     val noteText: String? = null,
     val colorHex: String = "#FFEB3B",
+    val isFavorite: Boolean = false,
     val createdTimestamp: Long = System.currentTimeMillis(),
     val type: AnnotationType = AnnotationType.HIGHLIGHT
 )

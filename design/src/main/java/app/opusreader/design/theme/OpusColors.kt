@@ -79,4 +79,23 @@ object OpusColors {
     val HighlightPink = Color(0xFFF48FB1)
     val HighlightOrange = Color(0xFFFFA726)
     val HighlightGreen = Color(0xFF81C784)
+    val HighlightDefault = Color(0xFFAAAAAA)
+    val HighlightGray = Color(0xFF888888)
+    val HighlightRed = Color(0xFFE53935)
+    val HighlightAqua = Color(0xFF26C6DA)
+    val HighlightPurple = Color(0xFFAB47BC)
+
+    // In-Book Search (D12)
+    val SearchHeaderDark = Color(0xFF141414)
+    val SearchBodyDark = Color(0xFF333333)
+    val SearchFieldUnderline = Color(0xFFB8B8B8)
+
+    // Annotations (D13, D14, D15, D16)
+    val AnnotationsHeaderDark = Color(0xFF232323)
+    val AnnotationsFilterBarDark = Color(0xFF1F1F1F)
+    val AnnotationsBackgroundDark = Color(0xFF000000)
+    val AnnotationsYellowBar = Color(0xFFFFD87C)
+    val AnnotationsBlueBar = Color(0xFF539AE0)
+    val ScrimAnnotationsDark = Color(0x2AFFFFFF)
+    val AnnotationsSortSheetDark = Color(0xFF1A1B1C)
 }

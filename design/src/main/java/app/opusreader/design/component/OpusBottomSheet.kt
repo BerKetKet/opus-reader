@@ -49,6 +49,7 @@ fun OpusBottomSheet(
     peekHeight: Dp = 440.dp,
     expandedHeight: Dp = 480.dp,
     backgroundColor: Color = OpusColors.SurfaceDark,
+    scrimColor: Color = OpusColors.ScrimDark,
     showDragHandle: Boolean = true,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -77,7 +78,7 @@ fun OpusBottomSheet(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(OpusColors.ScrimDark)
+                .background(scrimColor)
         ) {
             // Dismiss zone strictly above sheet
             Box(

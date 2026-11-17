@@ -21,3 +21,6 @@ D07: 61,442,212,675 61,760,212,993 61,1078,212,1311 61,1396,212,1629 61,1714,212
 
 # D10: Reader Chrome (Page text inside framed card masked; card frame, peek cards, sample banner, and chrome bars measured)
 D10: 250,475,830,1990
+
+# D12: In-book search (System keyboard masked)
+D12: 0,1450,1080,2340

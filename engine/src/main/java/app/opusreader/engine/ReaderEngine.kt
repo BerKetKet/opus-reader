@@ -21,6 +21,7 @@ interface ReaderEngine {
     fun progress(page: Page): Progress
     fun hitTest(page: Page, x: Float, y: Float): Locator?
     fun rectsFor(page: Page, range: LocatorRange): List<RectF>
+    fun textFor(page: Page, range: LocatorRange): String
     fun draw(page: Page, canvas: Canvas, theme: PageTheme)
     suspend fun search(query: String): List<SearchHit>
     val toc: List<TocEntry>

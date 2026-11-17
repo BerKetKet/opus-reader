@@ -6,6 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModelProvider
 import app.opusreader.OpusApplication
 import app.opusreader.data.db.OpusDatabase
+import app.opusreader.data.entity.AnnotationEntity
+import app.opusreader.data.entity.AnnotationType
 import app.opusreader.data.entity.BookEntity
 import app.opusreader.data.repository.SettingsRepository
 import app.opusreader.feature.library.ActiveSheet
@@ -13,6 +15,8 @@ import app.opusreader.feature.library.LibrarySortMode
 import app.opusreader.feature.library.LibraryViewModel
 import app.opusreader.feature.library.LibraryViewMode
 import app.opusreader.feature.reader.ActiveReaderSheet
+import app.opusreader.feature.reader.AnnotationUiModel
+import app.opusreader.feature.reader.AnnotationUiType
 import app.opusreader.feature.reader.ReaderBookUiModel
 import app.opusreader.feature.reader.ReaderViewModel
 import app.opusreader.engine.model.Locator
@@ -73,7 +77,7 @@ object DebugFixtureController {
                     settingsRepo.updateLibrarySortMode("RECENT")
                     settingsRepo.updateGroupBySeries(false)
                 }
-                "D10", "D11" -> {
+                "D10", "D11", "D12", "D13", "D14", "D15", "D16" -> {
                     val malazan = BookEntity(
                         id = "fixture_malazan",
                         title = if (isLiveness) "The Complete Malazan (Live)" else "The Complete Malazan",
@@ -85,6 +89,12 @@ object DebugFixtureController {
                         progressPercent = if (isLiveness) 0.28f else 0.10f
                     )
                     bookDao.insertBook(malazan)
+                    val annots = createMalazanAnnotations(isLiveness)
+                    val annotDao = db.annotationDao()
+                    annotDao.deleteAnnotationsForBook("fixture_malazan")
+                    for (annot in annots) {
+                        annotDao.insertAnnotation(annot)
+                    }
                 }
             }
 
@@ -120,7 +130,7 @@ object DebugFixtureController {
                         }
                     }
 
-                    if (fixtureId == "D10" || fixtureId == "D11") {
+                    if (fixtureId in listOf("D10", "D11", "D12", "D13", "D14", "D15", "D16")) {
                         val factory = ReaderViewModel.provideFactory(
                             app.container.libraryRepository,
                             app.container.settingsRepository,
@@ -149,14 +159,49 @@ object DebugFixtureController {
                             total = 879,
                             percent = if (isLiveness) 28f else 10f
                         )
+                        val activeSheet = when (fixtureId) {
+                            "D11" -> ActiveReaderSheet.CONTENTS
+                            "D12" -> ActiveReaderSheet.SEARCH
+                            "D13" -> ActiveReaderSheet.ANNOTATIONS
+                            "D14" -> ActiveReaderSheet.ANNOTATIONS_FILTER
+                            "D15" -> ActiveReaderSheet.ANNOTATIONS_SORT
+                            "D16" -> ActiveReaderSheet.ANNOTATIONS_SHARE
+                            else -> null
+                        }
+                        val annots = createMalazanAnnotations(isLiveness)
+                        val uiAnnots = annots.map { annot ->
+                            AnnotationUiModel(
+                                id = annot.id,
+                                bookId = annot.bookId,
+                                spineIndex = annot.spineIndex,
+                                startOffset = annot.startOffset,
+                                endOffset = annot.endOffset,
+                                selectedText = annot.selectedText,
+                                noteText = annot.noteText,
+                                colorHex = annot.colorHex,
+                                isFavorite = annot.isFavorite,
+                                createdTimestamp = annot.createdTimestamp,
+                                type = when (annot.type) {
+                                    AnnotationType.HIGHLIGHT -> AnnotationUiType.HIGHLIGHT
+                                    AnnotationType.NOTE -> AnnotationUiType.NOTE
+                                    AnnotationType.BOOKMARK -> AnnotationUiType.BOOKMARK
+                                }
+                            )
+                        }
+                        val searchHits = if (fixtureId == "D12" && isLiveness) createMalazanSearchHits(true) else emptyList()
+                        val searchQ = if (fixtureId == "D12") (if (isLiveness) "emperor" else "") else ""
+
                         android.util.Log.d("OpusDebug", "Setting fixture state for $fixtureId, isLiveness=$isLiveness")
                         readerVm.setFixtureState(
                             book = bookUi,
                             page = page,
                             progress = prog,
                             toc = tocList,
-                            chromeVisible = true,
-                            activeSheet = if (fixtureId == "D11") ActiveReaderSheet.CONTENTS else null
+                            chromeVisible = fixtureId == "D10",
+                            activeSheet = activeSheet,
+                            annotations = uiAnnots,
+                            searchResults = searchHits,
+                            searchQuery = searchQ
                         )
                     }
                 } catch (e: Exception) {
@@ -442,4 +487,87 @@ object DebugFixtureController {
             baseBooks.map { it.copy(collectionName = null) }
         }
     }
+
+    private fun createMalazanAnnotations(isLiveness: Boolean): List<AnnotationEntity> = if (isLiveness) {
+        listOf(
+            AnnotationEntity(
+                id = "fixture_annot_1",
+                bookId = "fixture_malazan",
+                spineIndex = 0,
+                startOffset = 3971,
+                endOffset = 4015,
+                selectedText = "soft knock diverted his attention. “Yes?”",
+                noteText = "Important meeting with the assassin.",
+                colorHex = "#F9E054",
+                isFavorite = true,
+                type = app.opusreader.data.entity.AnnotationType.HIGHLIGHT
+            ),
+            AnnotationEntity(
+                id = "fixture_annot_2",
+                bookId = "fixture_malazan",
+                spineIndex = 1,
+                startOffset = 11240,
+                endOffset = 11370,
+                selectedText = "“Question,” Mallick Rel said. “Has the council begun?” “Not yet,” Coltaine said slowly. “We await my warlock.” The priest of",
+                noteText = null,
+                colorHex = "#68B6EF",
+                isFavorite = false,
+                type = app.opusreader.data.entity.AnnotationType.BOOKMARK
+            ),
+            AnnotationEntity(
+                id = "fixture_annot_3",
+                bookId = "fixture_malazan",
+                spineIndex = 2,
+                startOffset = 15200,
+                endOffset = 15280,
+                selectedText = "The Wickans rode north across the plains.",
+                noteText = null,
+                colorHex = "#F385A2",
+                isFavorite = false,
+                type = app.opusreader.data.entity.AnnotationType.HIGHLIGHT
+            )
+        )
+    } else {
+        listOf(
+            AnnotationEntity(
+                id = "fixture_annot_1",
+                bookId = "fixture_malazan",
+                spineIndex = 0,
+                startOffset = 3971,
+                endOffset = 4015,
+                selectedText = "soft knock diverted his attention. “Yes?”",
+                noteText = null,
+                colorHex = "#F9E054",
+                isFavorite = false,
+                type = app.opusreader.data.entity.AnnotationType.HIGHLIGHT
+            ),
+            AnnotationEntity(
+                id = "fixture_annot_2",
+                bookId = "fixture_malazan",
+                spineIndex = 1,
+                startOffset = 11240,
+                endOffset = 11370,
+                selectedText = "“Question,” Mallick Rel said. “Has the council begun?” “Not yet,” Coltaine said slowly. “We await my warlock.” The priest of",
+                noteText = null,
+                colorHex = "#68B6EF",
+                isFavorite = false,
+                type = app.opusreader.data.entity.AnnotationType.BOOKMARK
+            )
+        )
+    }
+
+    private fun createMalazanSearchHits(isLiveness: Boolean): List<app.opusreader.engine.model.SearchHit> = listOf(
+        app.opusreader.engine.model.SearchHit(
+            locator = Locator(0, 91),
+            snippet = "...Ganoes asked boldly. The stains of rust seep through the crumbling plaster..."
+        ),
+        app.opusreader.engine.model.SearchHit(
+            locator = Locator(1, 245),
+            snippet = "...In the year of the Moon's Tears, the empire was young and bold..."
+        ),
+        app.opusreader.engine.model.SearchHit(
+            locator = Locator(4, 520),
+            snippet = "...The Emperor Kellanved and Dancer walked through the dead gate..."
+        )
+    )
 }

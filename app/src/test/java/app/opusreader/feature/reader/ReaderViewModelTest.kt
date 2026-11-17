@@ -88,6 +88,12 @@ class ReaderViewModelTest {
             fakeAnnotations.update { current -> current.filterNot { it.id == id } }
         }
 
+        override suspend fun toggleAnnotationFavorite(id: String, isFavorite: Boolean) {
+            fakeAnnotations.update { current ->
+                current.map { if (it.id == id) it.copy(isFavorite = isFavorite) else it }
+            }
+        }
+
         override fun createImporter(context: android.content.Context): EpubImporter {
             throw UnsupportedOperationException()
         }
@@ -161,6 +167,7 @@ class ReaderViewModelTest {
 
         override fun hitTest(page: Page, x: Float, y: Float): Locator? = null
         override fun rectsFor(page: Page, range: LocatorRange): List<android.graphics.RectF> = emptyList()
+        override fun textFor(page: Page, range: LocatorRange): String = ""
         override fun draw(page: Page, canvas: android.graphics.Canvas, theme: PageTheme) {}
         override suspend fun search(query: String): List<SearchHit> = emptyList()
         override val toc: List<TocEntry> = sampleToc

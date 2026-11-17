@@ -55,7 +55,7 @@ fun OpusNavHost(
         if (deepLinkUri != null) {
             val uri = android.net.Uri.parse(deepLinkUri)
             val segment = uri.lastPathSegment?.uppercase()
-            if (segment == "D10" || segment == "D11") {
+            if (segment in listOf("D10", "D11", "D12", "D13", "D14", "D15", "D16")) {
                 navController.navigate("reader/fixture_malazan") {
                     popUpTo(navController.graph.findStartDestination().id) {
                         saveState = true
@@ -200,7 +200,23 @@ fun OpusNavHost(
                     onDismissSheet = readerViewModel::onDismissSheet,
                     onJumpToToc = readerViewModel::onJumpToToc,
                     onToggleThumbnails = readerViewModel::onToggleThumbnails,
-                    onWordLongPress = readerViewModel::onWordLongPress
+                    onWordLongPress = readerViewModel::onWordLongPress,
+                    onUpdateSelectionRange = readerViewModel::onUpdateSelectionRange,
+                    onClearSelection = readerViewModel::onClearSelection,
+                    onAnnotationClick = readerViewModel::onAnnotationClick,
+                    onCreateHighlight = readerViewModel::onCreateHighlight,
+                    onChangeHighlightColor = readerViewModel::onChangeHighlightColor,
+                    onDeleteAnnotation = readerViewModel::onDeleteAnnotation,
+                    onOpenNoteEditor = readerViewModel::onOpenNoteEditor,
+                    onDismissNoteEditor = readerViewModel::onDismissNoteEditor,
+                    onSaveNote = readerViewModel::onSaveNote,
+                    onToggleFavorite = readerViewModel::onToggleFavorite,
+                    onSearchQueryChange = readerViewModel::onSearchQueryChange,
+                    onSelectSearchHit = readerViewModel::onSelectSearchHit,
+                    onNextSearchHit = readerViewModel::onNextSearchHit,
+                    onPreviousSearchHit = readerViewModel::onPreviousSearchHit,
+                    onSetAnnotationFilter = readerViewModel::onSetAnnotationFilter,
+                    onSetAnnotationSort = readerViewModel::onSetAnnotationSort
                 )
             }
         }
