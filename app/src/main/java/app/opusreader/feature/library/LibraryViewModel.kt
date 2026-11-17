@@ -41,7 +41,8 @@ class LibraryViewModel(
                         isSample = entity.isSample,
                         isNew = entity.isNew,
                         collectionName = entity.collectionName,
-                        lastReadTimestamp = entity.lastReadTimestamp
+                        lastReadTimestamp = entity.lastReadTimestamp,
+                        isDoc = entity.collectionName == "Docs" || entity.filePath.contains("/docs/")
                     )
                 }
 

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import app.opusreader.design.theme.OpusColors
 import app.opusreader.design.theme.OpusDimensions
 import app.opusreader.design.theme.OpusTypography
@@ -40,15 +42,24 @@ fun OpusBottomNavBar(
     backgroundColor: Color = OpusColors.BackgroundDark,
     hasLeadingResumeSlot: Boolean = true
 ) {
-    Row(
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .height(OpusDimensions.BottomNavHeight)
             .background(backgroundColor)
-            .testTag("opus_bottom_nav_bar"),
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically
+            .testTag("opus_bottom_nav_bar")
     ) {
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = OpusColors.DividerDark
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             if (hasLeadingResumeSlot) {
                 Box(
                     modifier = Modifier
@@ -58,7 +69,7 @@ fun OpusBottomNavBar(
             }
             items.forEach { item ->
                 val isSelected = item.id == selectedId
-                val tint = if (isSelected) OpusColors.AccentBlue else OpusColors.TextSecondaryDark
+                val tint = if (isSelected) OpusColors.NavSelectedBlue else OpusColors.NavUnselectedGray
 
                 Box(
                     modifier = Modifier
@@ -78,13 +89,15 @@ fun OpusBottomNavBar(
                             tint = tint,
                             modifier = Modifier.size(OpusDimensions.BottomNavIconSize)
                         )
+                        Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = item.label,
-                            style = OpusTypography.labelMedium,
+                            style = OpusTypography.labelMedium.copy(fontSize = 10.sp, lineHeight = 13.sp),
                             color = tint
                         )
                     }
                 }
             }
         }
+    }
 }

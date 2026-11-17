@@ -273,39 +273,66 @@ object DebugFixtureController {
     }
 
     private fun createD05Books(isLiveness: Boolean): List<BookEntity> {
+        val baseBooks = createD01Books(false)
         val list = mutableListOf<BookEntity>()
-        // 5 Samples (unread)
-        for (i in 1..5) {
+
+        // 70 Docs total:
+        // First 12 docs use the exact D01 books with their real covers, titles, authors:
+        val readDocsTarget = if (isLiveness) 17 else 16
+        baseBooks.forEachIndexed { idx, book ->
+            val isRead = idx < readDocsTarget
             list.add(
-                BookEntity(
-                    id = "sample_$i",
-                    title = "Sample Book $i",
-                    author = "Sample Author $i",
-                    filePath = "/samples/$i.epub",
-                    progressPercent = 0f,
-                    isDownloaded = false,
-                    isSample = true,
-                    collectionName = null
+                book.copy(
+                    id = "d05_doc_${idx + 1}",
+                    filePath = "/docs/${book.id}.pdf",
+                    collectionName = "Docs",
+                    isSample = false,
+                    isDownloaded = true,
+                    progressPercent = if (isRead) 100f else 0f
                 )
             )
         }
-        // 70 Docs: 16 Read, 54 Unread (or 17 Read, 53 Unread if isLiveness)
-        val readDocsCount = if (isLiveness) 17 else 16
-        for (i in 1..70) {
-            val isRead = i <= readDocsCount
+
+        // Remaining 58 docs (to make 70 total docs)
+        for (i in 13..70) {
+            val isRead = (i - 1) < readDocsTarget
+            val cycleIdx = (i - 1) % 12
+            val template = baseBooks[cycleIdx]
             list.add(
                 BookEntity(
-                    id = "doc_$i",
-                    title = "Document $i",
-                    author = "Author $i",
-                    filePath = "/docs/$i.epub",
+                    id = "d05_doc_$i",
+                    title = "${template.title} Vol. $i",
+                    author = template.author,
+                    filePath = "/docs/doc_$i.pdf",
+                    coverPath = template.coverPath,
                     progressPercent = if (isRead) 100f else 0f,
                     isDownloaded = true,
                     isSample = false,
-                    collectionName = "Docs"
+                    collectionName = "Docs",
+                    lastReadTimestamp = 1700000000000L - i * 1000L
                 )
             )
         }
+
+        // 5 Samples (unread, not docs):
+        for (i in 1..5) {
+            val template = baseBooks[(i + 4) % 12]
+            list.add(
+                BookEntity(
+                    id = "d05_sample_$i",
+                    title = "${template.title} (Sample)",
+                    author = template.author,
+                    filePath = "/samples/sample_$i.epub",
+                    coverPath = template.coverPath,
+                    progressPercent = 0f,
+                    isDownloaded = false,
+                    isSample = true,
+                    collectionName = null,
+                    lastReadTimestamp = 0L
+                )
+            )
+        }
+
         return list
     }
 

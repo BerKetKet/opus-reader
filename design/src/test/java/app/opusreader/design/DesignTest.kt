@@ -47,6 +47,6 @@ class DesignTest {
         assertEquals(32.dp, OpusDimensions.SheetHandleWidth)
         assertEquals(4.dp, OpusDimensions.SheetHandleHeight)
         assertEquals(7.dp, OpusDimensions.SheetHandlePaddingTop)
-        assertEquals(16.dp, OpusDimensions.SheetCornerRadius)
+        assertEquals(10.dp, OpusDimensions.SheetCornerRadius)
     }
 }

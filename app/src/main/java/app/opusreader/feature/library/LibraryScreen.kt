@@ -551,13 +551,13 @@ private fun FilterBottomSheet(
             ) {
                 Text(
                     text = "Filter",
-                    style = OpusTypography.headlineMedium,
+                    style = OpusTypography.titleLarge,
                     color = OpusColors.TextPrimaryDark
                 )
                 Text(
                     text = "DONE",
                     style = OpusTypography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = OpusColors.HighlightBlue,
+                    color = OpusColors.LinkBlueDark,
                     modifier = Modifier
                         .clickable { onApplyFilter(state) }
                         .testTag("filter_done_button")
@@ -575,28 +575,28 @@ private fun FilterBottomSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = if (readStateExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    imageVector = if (readStateExpanded) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
                     contentDescription = null,
-                    tint = OpusColors.HighlightBlue,
+                    tint = OpusColors.LinkBlueDark,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(OpusDimensions.SpacingSmall))
                 Text(
                     text = "Read state",
                     style = OpusTypography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                    color = OpusColors.HighlightBlue
+                    color = OpusColors.LinkBlueDark
                 )
             }
 
             if (readStateExpanded) {
-                HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+                HorizontalDivider(thickness = 1.dp, color = OpusColors.DividerDark)
                 FilterItemRow(
                     label = "Read ($readCount)",
                     selected = state.showRead,
                     onClick = { state = state.copy(showRead = !state.showRead) },
                     modifier = Modifier.testTag("filter_opt_read")
                 )
-                HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+                HorizontalDivider(thickness = 1.dp, color = OpusColors.DividerDark)
                 FilterItemRow(
                     label = "Unread ($unreadCount)",
                     selected = state.showUnread,
@@ -605,7 +605,7 @@ private fun FilterBottomSheet(
                 )
             }
 
-            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+            HorizontalDivider(thickness = 1.dp, color = OpusColors.DividerDark)
 
             // Section 2: Content type
             Row(
@@ -616,42 +616,42 @@ private fun FilterBottomSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = if (contentTypeExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    imageVector = if (contentTypeExpanded) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
                     contentDescription = null,
-                    tint = OpusColors.HighlightBlue,
+                    tint = OpusColors.LinkBlueDark,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(OpusDimensions.SpacingSmall))
                 Text(
                     text = "Content type",
                     style = OpusTypography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                    color = OpusColors.HighlightBlue
+                    color = OpusColors.LinkBlueDark
                 )
             }
 
             if (contentTypeExpanded) {
-                HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+                HorizontalDivider(thickness = 1.dp, color = OpusColors.DividerDark)
                 FilterItemRow(
                     label = "Books ($booksCount)",
                     selected = state.showBooks,
                     onClick = { state = state.copy(showBooks = !state.showBooks) },
                     modifier = Modifier.testTag("filter_opt_books")
                 )
-                HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+                HorizontalDivider(thickness = 1.dp, color = OpusColors.DividerDark)
                 FilterItemRow(
                     label = "Samples ($samplesCount)",
                     selected = state.showSamples,
                     onClick = { state = state.copy(showSamples = !state.showSamples) },
                     modifier = Modifier.testTag("filter_opt_samples")
                 )
-                HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+                HorizontalDivider(thickness = 1.dp, color = OpusColors.DividerDark)
                 FilterItemRow(
                     label = "Docs ($docsCount)",
                     selected = state.showDocs,
                     onClick = { state = state.copy(showDocs = !state.showDocs) },
                     modifier = Modifier.testTag("filter_opt_docs")
                 )
-                HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+                HorizontalDivider(thickness = 1.dp, color = OpusColors.DividerDark)
             }
         }
     }
@@ -667,8 +667,9 @@ private fun FilterItemRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .height(OpusDimensions.SheetRowHeight)
             .clickable(onClick = onClick)
-            .padding(horizontal = OpusDimensions.ScreenMarginHorizontal, vertical = OpusDimensions.SpacingMedium),
+            .padding(horizontal = OpusDimensions.ScreenMarginHorizontal),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -681,7 +682,7 @@ private fun FilterItemRow(
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = "Selected",
-                tint = OpusColors.HighlightBlue,
+                tint = OpusColors.LinkBlueDark,
                 modifier = Modifier.size(20.dp)
             )
         }
@@ -710,7 +711,7 @@ private fun ViewSortBottomSheet(
                 .fillMaxWidth()
                 .padding(top = OpusDimensions.SpacingLarge)
         ) {
-            // Header: View & sort / DONE
+            // Header: View / DONE
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -719,14 +720,14 @@ private fun ViewSortBottomSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "View & sort",
-                    style = OpusTypography.headlineMedium,
+                    text = "View",
+                    style = OpusTypography.titleLarge,
                     color = OpusColors.TextPrimaryDark
                 )
                 Text(
                     text = "DONE",
                     style = OpusTypography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = OpusColors.HighlightBlue,
+                    color = OpusColors.LinkBlueDark,
                     modifier = Modifier
                         .clickable { onDismiss() }
                         .testTag("view_sort_done_button")
@@ -734,13 +735,14 @@ private fun ViewSortBottomSheet(
             }
 
             Spacer(modifier = Modifier.height(OpusDimensions.SpacingStandard))
-            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+            HorizontalDivider(thickness = 1.dp, color = OpusColors.DividerDark)
 
             // Group by series toggle
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = OpusDimensions.ScreenMarginHorizontal, vertical = OpusDimensions.SpacingSmall),
+                    .height(OpusDimensions.SheetRowHeight)
+                    .padding(horizontal = OpusDimensions.ScreenMarginHorizontal),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -754,7 +756,7 @@ private fun ViewSortBottomSheet(
                     onCheckedChange = onGroupBySeriesChange,
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color.White,
-                        checkedTrackColor = OpusColors.HighlightBlue,
+                        checkedTrackColor = OpusColors.LinkBlueDark,
                         uncheckedThumbColor = Color(0xFF9E9E9E),
                         uncheckedTrackColor = Color(0xFF333333)
                     ),
@@ -762,7 +764,7 @@ private fun ViewSortBottomSheet(
                 )
             }
 
-            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+            HorizontalDivider(thickness = 1.dp, color = OpusColors.DividerDark)
 
             // View Section
             SheetOptionRow(
@@ -772,7 +774,7 @@ private fun ViewSortBottomSheet(
                 onClick = { onViewModeChange(LibraryViewMode.GRID) },
                 modifier = Modifier.testTag("view_opt_grid")
             )
-            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+            HorizontalDivider(thickness = 1.dp, color = OpusColors.DividerDark)
             SheetOptionRow(
                 icon = Icons.AutoMirrored.Filled.FormatListBulleted,
                 label = "List",
@@ -780,7 +782,7 @@ private fun ViewSortBottomSheet(
                 onClick = { onViewModeChange(LibraryViewMode.LIST) },
                 modifier = Modifier.testTag("view_opt_list")
             )
-            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+            HorizontalDivider(thickness = 1.dp, color = OpusColors.DividerDark)
             SheetOptionRow(
                 icon = Icons.Default.Folder,
                 label = "Collections",
@@ -788,37 +790,51 @@ private fun ViewSortBottomSheet(
                 onClick = { onViewModeChange(LibraryViewMode.COLLECTIONS) },
                 modifier = Modifier.testTag("view_opt_collections")
             )
-            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+            HorizontalDivider(thickness = 1.dp, color = OpusColors.DividerDark)
 
-            // Sort Section
+            // Sort Section Header
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = OpusDimensions.ScreenMarginHorizontal, vertical = OpusDimensions.SpacingSmall)
+            ) {
+                Text(
+                    text = "Sort",
+                    style = OpusTypography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                    color = OpusColors.LinkBlueDark
+                )
+            }
+            HorizontalDivider(thickness = 1.dp, color = OpusColors.DividerDark)
+
+            // Sort Options
             SheetOptionRow(
                 label = "Most Recent",
                 selected = sortMode == LibrarySortMode.RECENT,
                 onClick = { onSortModeChange(LibrarySortMode.RECENT) },
                 modifier = Modifier.testTag("sort_opt_recent")
             )
-            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+            HorizontalDivider(thickness = 1.dp, color = OpusColors.DividerDark)
             SheetOptionRow(
                 label = "Title",
                 selected = sortMode == LibrarySortMode.TITLE,
                 onClick = { onSortModeChange(LibrarySortMode.TITLE) },
                 modifier = Modifier.testTag("sort_opt_title")
             )
-            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+            HorizontalDivider(thickness = 1.dp, color = OpusColors.DividerDark)
             SheetOptionRow(
                 label = "Author (A-Z)",
                 selected = sortMode == LibrarySortMode.AUTHOR_AZ,
                 onClick = { onSortModeChange(LibrarySortMode.AUTHOR_AZ) },
                 modifier = Modifier.testTag("sort_opt_author_az")
             )
-            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+            HorizontalDivider(thickness = 1.dp, color = OpusColors.DividerDark)
             SheetOptionRow(
                 label = "Author (Z-A)",
                 selected = sortMode == LibrarySortMode.AUTHOR_ZA,
                 onClick = { onSortModeChange(LibrarySortMode.AUTHOR_ZA) },
                 modifier = Modifier.testTag("sort_opt_author_za")
             )
-            HorizontalDivider(thickness = OpusDimensions.DividerThickness, color = OpusColors.DividerDark)
+            HorizontalDivider(thickness = 1.dp, color = OpusColors.DividerDark)
         }
     }
 }
@@ -834,8 +850,9 @@ private fun SheetOptionRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .height(OpusDimensions.SheetRowHeight)
             .clickable(onClick = onClick)
-            .padding(horizontal = OpusDimensions.ScreenMarginHorizontal, vertical = OpusDimensions.SpacingMedium),
+            .padding(horizontal = OpusDimensions.ScreenMarginHorizontal),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (icon != null) {
@@ -857,7 +874,7 @@ private fun SheetOptionRow(
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = "Selected",
-                tint = OpusColors.HighlightBlue,
+                tint = OpusColors.LinkBlueDark,
                 modifier = Modifier.size(20.dp)
             )
         }

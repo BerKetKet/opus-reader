@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -35,10 +36,10 @@ import app.opusreader.feature.library.LibraryViewModel
 import app.opusreader.feature.more.MoreScreen
 import coil.compose.AsyncImage
 
-sealed class Screen(val route: String, val label: String, val tag: String, val icon: ImageVector, val id: Int) {
-    data object Home : Screen("home", "Home", "tab_home", Icons.Default.Home, 0)
-    data object Library : Screen("library", "Library", "tab_library", Icons.Default.LocalLibrary, 1)
-    data object More : Screen("more", "More", "tab_more", Icons.Default.MoreHoriz, 2)
+sealed class Screen(val route: String, val label: String, val tag: String, val iconRes: Int, val id: Int) {
+    data object Home : Screen("home", "Home", "tab_home", app.opusreader.design.R.drawable.ic_kindle_home, 0)
+    data object Library : Screen("library", "Library", "tab_library", app.opusreader.design.R.drawable.ic_kindle_library, 1)
+    data object More : Screen("more", "More", "tab_more", app.opusreader.design.R.drawable.ic_kindle_more, 2)
 }
 
 @Composable
@@ -73,7 +74,7 @@ fun OpusNavHost(
         OpusNavItem(
             id = screen.id,
             label = screen.label,
-            icon = screen.icon,
+            icon = ImageVector.vectorResource(screen.iconRes),
             tag = screen.tag
         )
     }
@@ -145,24 +146,26 @@ fun OpusNavHost(
             }
         }
 
-        // Bottom Navigation Bar
-        OpusBottomNavBar(
-            items = navItems,
-            selectedId = selectedId,
-            onItemSelected = { id ->
-                val target = screens.firstOrNull { it.id == id }
-                if (target != null && target.route != currentRoute) {
-                    navController.navigate(target.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+        // Bottom Navigation Bar (hidden when a window-level bottom sheet is active)
+        if (libraryUiState.activeSheet == null) {
+            OpusBottomNavBar(
+                items = navItems,
+                selectedId = selectedId,
+                onItemSelected = { id ->
+                    val target = screens.firstOrNull { it.id == id }
+                    if (target != null && target.route != currentRoute) {
+                        navController.navigate(target.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
-                }
-            },
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
+                },
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
+        }
 
         // Floating resume cover pinned at bottom left over the bottom navigation bar
         val lastBook = libraryUiState.lastReadBook

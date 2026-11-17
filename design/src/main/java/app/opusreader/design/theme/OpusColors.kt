@@ -8,13 +8,13 @@ object OpusColors {
     val SurfaceDark = Color(0xFF232323)
     val SurfaceVariantDark = Color(0xFF1C1D1E)
     val TopBarDark = Color(0xFF101112)
-    val BottomBarDark = Color(0xFF141414)
+    val BottomBarDark = Color(0xFF101112)
 
     // Sheets
     val SheetContentsDark = Color(0xFF232323)
     val SheetDisplaySettingsDark = Color(0xFF2C2C2E)
     val SheetAnnotationsDark = Color(0xFF292A2B)
-    val ScrimDark = Color(0x99444648)
+    val ScrimDark = Color(0x99000000)
     val DragHandleDark = Color(0xFF5A5A5C)
 
     // Dark Theme Text
@@ -23,13 +23,16 @@ object OpusColors {
     val TextTertiaryDark = Color(0xFF8E9194)
 
     // Dividers and borders
-    val DividerDark = Color(0xFF3B3C3D)
+    val DividerDark = Color(0xFF333435)
     val BorderDark = Color(0xFF404040)
     val SearchBorderDark = Color(0xFF8E9194)
 
     // Accents & highlights
     val AccentBlue = Color(0xFF2491FF)
     val HighlightBlue = Color(0xFF0274E6)
+    val LinkBlueDark = Color(0xFF8DB8D1)
+    val NavSelectedBlue = Color(0xFF4B8CCE)
+    val NavUnselectedGray = Color(0xFF919496)
     val AccentGold = Color(0xFFD29648)
     val BookmarkRed = Color(0xFFD8232A)
 

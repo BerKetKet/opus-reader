@@ -28,7 +28,7 @@ object OpusDimensions {
     val DividerThickness: Dp = 3.refPx // ~1.14 dp
 
     // Bottom Navigation Bar
-    val BottomNavHeight: Dp = 166.refPx // ~63.24 dp
+    val BottomNavHeight: Dp = 62.dp // 61dp background + 1dp top border (~163 refPx)
     val BottomNavIconSize: Dp = 24.dp
 
     // Search Bar
@@ -58,9 +58,10 @@ object OpusDimensions {
     val SheetHandleHeight: Dp = 4.dp
     val SheetHandlePaddingTop: Dp = 7.dp
     val SheetHandlePaddingBottom: Dp = 12.dp
-    val SheetCornerRadius: Dp = 16.dp
-    val FilterSheetHeight: Dp = 1262.refPx
-    val ViewSortSheetHeight: Dp = 1582.refPx
+    val SheetCornerRadius: Dp = 10.dp
+    val FilterSheetHeight: Dp = 1200.refPx // ~457.1 dp, top aligns at y=1076
+    val ViewSortSheetHeight: Dp = 1518.refPx // ~578.3 dp, top aligns at y=758
+    val SheetRowHeight: Dp = 150.refPx // ~57.1 dp row pitch
 
     // Chips
     val ChipHeight: Dp = 36.dp
