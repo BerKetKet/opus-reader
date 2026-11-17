@@ -40,7 +40,8 @@ data class BookSource(
 data class ReaderSettings(
     val fontSizeSp: Float = 16f,
     val lineSpacingMultiplier: Float = 1.3f,
-    val fontName: String = "Bookerly"
+    val fontName: String = "Bookerly",
+    val typeface: android.graphics.Typeface? = null
 )
 
 data class BookInfo(

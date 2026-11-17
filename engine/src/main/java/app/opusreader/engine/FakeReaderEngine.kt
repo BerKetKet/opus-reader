@@ -26,8 +26,11 @@ class FakeReaderEngine(
     private var viewportWidth: Int = 1080,
     private var viewportHeight: Int = 2202,
     private var marginHorizontal: Float = 75f,
-    private var marginVertical: Float = 90f
+    private var marginVertical: Float = 90f,
+    private val defaultTypeface: Typeface? = null
 ) : ReaderEngine {
+
+    val totalPages: Int get() = allPages.size
 
     private var currentBook: ExtractedBook? = null
     private var currentSettings: ReaderSettings = ReaderSettings()
@@ -108,16 +111,37 @@ class FakeReaderEngine(
             return
         }
 
+        val activeTypeface = currentSettings.typeface ?: defaultTypeface ?: Typeface.SERIF
         val fontSizePx = currentSettings.fontSizeSp * 2.625f
         val lineHeight = fontSizePx * currentSettings.lineSpacingMultiplier
         val contentWidth = (viewportWidth - (2 * marginHorizontal)).coerceAtLeast(100f)
         val contentHeight = (viewportHeight - (2 * marginVertical)).coerceAtLeast(100f)
 
-        // Estimated metrics for JVM test runner vs Android runtime
-        val charWidth = fontSizePx * 0.52f
-        val spaceWidth = fontSizePx * 0.28f
-        val ascent = fontSizePx * 0.8f
-        val descent = fontSizePx * 0.2f
+        // Try measuring with Paint if available
+        val paint = try {
+            Paint().apply {
+                textSize = fontSizePx
+                typeface = activeTypeface
+            }
+        } catch (_: Throwable) {
+            null
+        }
+
+        val testMeasure = try { paint?.measureText("M") ?: 0f } catch (_: Throwable) { 0f }
+        val usePaintMetrics = testMeasure > 0.1f
+
+        val tfFactor = when {
+            activeTypeface != null && activeTypeface == Typeface.SANS_SERIF -> 0.48f
+            activeTypeface != null && activeTypeface == Typeface.MONOSPACE -> 0.62f
+            currentSettings.fontName.contains("Ember", ignoreCase = true) || currentSettings.fontName.contains("Sans", ignoreCase = true) -> 0.48f
+            currentSettings.fontName.contains("Mono", ignoreCase = true) -> 0.62f
+            activeTypeface != null && activeTypeface != Typeface.SERIF -> 0.56f
+            else -> 0.52f
+        }
+        val charWidth = if (usePaintMetrics) 0f else (fontSizePx * tfFactor)
+        val spaceWidth = if (usePaintMetrics) paint!!.measureText(" ") else (fontSizePx * 0.28f)
+        val ascent = if (usePaintMetrics) kotlin.math.abs(paint!!.fontMetrics.ascent) else (fontSizePx * 0.8f)
+        val descent = if (usePaintMetrics) paint!!.fontMetrics.descent else (fontSizePx * 0.2f)
 
         var currentX = marginHorizontal
         var currentY = marginVertical + lineHeight
@@ -133,7 +157,7 @@ class FakeReaderEngine(
             val wordStart = match.range.first
             val wordEnd = match.range.last + 1
 
-            val wordWidth = wordText.length * charWidth
+            val wordWidth = if (usePaintMetrics) paint!!.measureText(wordText) else (wordText.length * charWidth)
 
             // Check line wrap
             if (currentX + wordWidth > marginHorizontal + contentWidth && pageWords.isNotEmpty() && currentX > marginHorizontal) {
@@ -158,12 +182,12 @@ class FakeReaderEngine(
                 currentY = marginVertical + lineHeight
             }
 
-            val rect = RectF(
-                currentX,
-                currentY - ascent,
-                currentX + wordWidth,
-                currentY + descent
-            )
+            val rect = RectF().apply {
+                left = currentX
+                top = currentY - ascent
+                right = currentX + wordWidth
+                bottom = currentY + descent
+            }
 
             pageWords.add(
                 WordBox(
@@ -299,12 +323,13 @@ class FakeReaderEngine(
     override fun draw(page: Page, canvas: Canvas, theme: PageTheme) {
         canvas.drawColor(theme.backgroundColor)
 
+        val activeTypeface = currentSettings.typeface ?: defaultTypeface ?: Typeface.SERIF
         val paint = Paint().apply {
             color = theme.textColor
             textSize = currentSettings.fontSizeSp * 2.625f
             isAntiAlias = true
             try {
-                typeface = Typeface.SERIF
+                typeface = activeTypeface
             } catch (_: Throwable) { }
         }
 
