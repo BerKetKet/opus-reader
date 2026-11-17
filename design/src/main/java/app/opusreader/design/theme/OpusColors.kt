@@ -42,6 +42,21 @@ object OpusColors {
     val PageGreen = Color(0xFFCEE5D8)
     val PageBlack = Color(0xFF000000)
 
+    // Reader Chrome & Scrubber
+    val ReaderChromeTopDark = Color(0xFF232323)
+    val ReaderChromeBottomDark = Color(0xFF141414)
+    val ReaderScrubberTrackActive = Color(0xFF29ABE2)
+    val ReaderScrubberTrackInactive = Color(0xFFD4D4D4)
+    val ReaderDividerDark = Color(0xFF898989)
+
+    // Contents / TOC
+    val ReaderTocBackground = Color(0xFF232323)
+    val ReaderTocTabActive = Color(0xFF29ABE2)
+    val ReaderTocDivider = Color(0xFF8E8E93)
+    val ReaderTocTabDivider = Color(0xFF383838)
+    val ReaderTocTextPrimary = Color(0xFFEEEEEE)
+    val ReaderTocTextSecondary = Color(0xFFA6A6A6)
+
     // Light Theme
     val BackgroundLight = Color(0xFFFFFFFF)
     val SurfaceLight = Color(0xFFF7F7F7)

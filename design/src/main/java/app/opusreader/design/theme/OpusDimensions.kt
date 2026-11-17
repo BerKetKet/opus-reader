@@ -69,4 +69,28 @@ object OpusDimensions {
 
     // List rows
     val ListRowMinHeight: Dp = 56.dp
+
+    // System bars
+    val StatusBarHeight: Dp = 90.refPx // ~34.3 dp
+
+    // Reader Chrome (measured from D10 reference 1080x2340 @ 420 dpi)
+    val ReaderTopBarHeight: Dp = 160.refPx // ~61.0 dp (y=83..243)
+    val ReaderBottomBarHeight: Dp = 275.refPx // ~104.8 dp (y=2001..2276, above navigation bar)
+    val ReaderLocationPaddingTop: Dp = 41.refPx // ~15.6 dp (y=2042)
+    val ReaderLocationToScrubberSpacing: Dp = 63.refPx // ~24.0 dp
+    val ReaderScrubberHeight: Dp = 110.refPx // ~41.9 dp (y=2137..2247)
+    val ReaderScrubberToDividerSpacing: Dp = 30.refPx // ~11.4 dp
+    val ReaderBirdsEyeWidth: Dp = 137.refPx // ~52.2 dp
+    val ReaderTrackStartX: Dp = 169.refPx // ~64.4 dp
+    val ReaderTrackEndX: Dp = 1012.refPx // ~385.5 dp
+    val ReaderBottomGestureBarHeight: Dp = 63.refPx // ~24.0 dp
+
+    // Reader Contents / TOC (measured from D11 reference)
+    val ReaderContentsHeaderHeight: Dp = 189.refPx // ~72.0 dp (y=90..279)
+    val ReaderContentsTabsHeight: Dp = 134.refPx // ~51.0 dp (y=280..414)
+    val ReaderContentsRowHeight: Dp = 132.refPx // ~50.3 dp pitch
+    val ReaderContentsFirstRowHeight: Dp = 49.refPx // ~18.7 dp
+    val ReaderContentsMultiLineRowHeight: Dp = 185.refPx // ~70.5 dp (two-line TOC entry)
+    val ReaderContentsIndentLevel0: Dp = 87.refPx // ~33.1 dp
+    val ReaderContentsIndentLevel1: Dp = 129.refPx // ~49.1 dp
 }

@@ -34,3 +34,23 @@
    - `hitTest(page, x, y)` implements dual-stage detection: exact bounding box intersection with character interpolation, falling back to proximity within 100px.
    - Page navigation (`pageAt`, `next`, `previous`) preserves exact `Locator` across engine recreation.
 
+
+## S05 Reader Chrome Decisions
+
+1. **Window Status & Navigation Bar Color Synchronization**:
+   - On the test device, Compose content begins at `y=83` below the hardware status bar. Rather than inserting artificial status bar spacers that displace the top chrome, `ReaderScreen` synchronizes `window.statusBarColor = #232323` and `window.navigationBarColor = #141414` via `DisposableEffect`.
+   - `OpusReaderTopBar` renders from `y=83..243`, placing icons centered at `y=163` (matching reference icons at `y=166.08` with 0 px offset).
+
+2. **Bottom Bar Geometry & Gesture Bar Inset Alignment**:
+   - With window-level navigation bar coloring (`#141414`), Compose content naturally terminates at `y=2276`.
+   - `OpusReaderBottomBar` height is set to `275.refPx` (`y=2001..2276`). The 1px divider aligns at `y=2276`, and the scrubber track aligns at `y=2191.5`, achieving 0 px offset against reference `10_reader-chrome-visible.png`.
+
+3. **Table of Contents (D11) Structure & Geometry**:
+   - Screen D11 features no tabs row. Header contains Bookerly Bold title, author, and close button (X), followed by a 1px divider.
+   - Single-line chapters use a 132 refPx pitch (`OpusDimensions.ReaderContentsRowHeight`). Multi-line wrapped chapters use 185 refPx (`OpusDimensions.ReaderContentsMultiLineRowHeight`).
+   - Chapter indents follow Kindle specification: Level 0 at 87 refPx, Level 1 at 129 refPx. Active reading chapter features a 4dp white indicator bar at the left margin.
+
+4. **Interaction Zone Architecture**:
+   - Tap zones: Left 20% navigates previous page, Right 20% navigates next page, Center 60% toggles chrome visibility.
+   - Drag gestures: Horizontal drag threshold of 50px triggers page turn.
+   - Scrubber: Continuous drag updates live location label; pointer release commits reading position to `ReaderEngine`.

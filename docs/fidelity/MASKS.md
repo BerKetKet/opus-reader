@@ -14,3 +14,6 @@ D06: 83,467,345,750 408,467,670,750 733,467,996,750
 
 # D07: Library list (Thumbnail interiors masked; bounds, titles, authors unmasked)
 D07: 61,442,212,675 61,760,212,993 61,1078,212,1311 61,1396,212,1629 61,1714,212,1947 81,2043,189,2234
+
+# D10: Reader Chrome (Mask reading text area to compare chrome bars)
+D10: 0,251,1080,2040

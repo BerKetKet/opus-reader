@@ -49,4 +49,17 @@ class DesignTest {
         assertEquals(7.dp, OpusDimensions.SheetHandlePaddingTop)
         assertEquals(10.dp, OpusDimensions.SheetCornerRadius)
     }
+
+    @Test
+    fun readerChrome_tokensAndDimensions_meetDesignSpecifications() {
+        assertEquals(Color(0xFF232323), OpusColors.ReaderChromeTopDark)
+        assertEquals(Color(0xFF141414), OpusColors.ReaderChromeBottomDark)
+        assertEquals(Color(0xFF29ABE2), OpusColors.ReaderScrubberTrackActive)
+        assertEquals(Color(0xFFD4D4D4), OpusColors.ReaderScrubberTrackInactive)
+
+        assertTrue(OpusDimensions.ReaderTopBarHeight > 50.dp)
+        assertTrue(OpusDimensions.ReaderBottomBarHeight > 100.dp)
+        assertTrue(OpusDimensions.ReaderScrubberHeight > 35.dp)
+        assertTrue(OpusDimensions.ReaderContentsRowHeight > 45.dp)
+    }
 }

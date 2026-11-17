@@ -12,6 +12,14 @@ import app.opusreader.feature.library.ActiveSheet
 import app.opusreader.feature.library.LibrarySortMode
 import app.opusreader.feature.library.LibraryViewModel
 import app.opusreader.feature.library.LibraryViewMode
+import app.opusreader.feature.reader.ActiveReaderSheet
+import app.opusreader.feature.reader.ReaderBookUiModel
+import app.opusreader.feature.reader.ReaderViewModel
+import app.opusreader.engine.model.Locator
+import app.opusreader.engine.model.Page
+import app.opusreader.engine.model.Progress
+import app.opusreader.engine.model.TocEntry
+import app.opusreader.engine.model.WordBox
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -65,6 +73,19 @@ object DebugFixtureController {
                     settingsRepo.updateLibrarySortMode("RECENT")
                     settingsRepo.updateGroupBySeries(false)
                 }
+                "D10", "D11" -> {
+                    val malazan = BookEntity(
+                        id = "fixture_malazan",
+                        title = if (isLiveness) "The Complete Malazan (Live)" else "The Complete Malazan",
+                        author = "Steven Erikson",
+                        filePath = "/books/malazan.epub",
+                        coverPath = "android.resource://app.opusreader.debug/drawable/cover_d01_0",
+                        spineIndex = if (isLiveness) 3 else 0,
+                        charOffset = if (isLiveness) 245 else 91,
+                        progressPercent = if (isLiveness) 0.28f else 0.10f
+                    )
+                    bookDao.insertBook(malazan)
+                }
             }
 
             withContext(Dispatchers.Main) {
@@ -98,10 +119,83 @@ object DebugFixtureController {
                             viewModel.onDismissSheet()
                         }
                     }
-                } catch (_: Exception) {
-                    // Activity might not be ready yet
+
+                    if (fixtureId == "D10" || fixtureId == "D11") {
+                        val factory = ReaderViewModel.provideFactory(
+                            app.container.libraryRepository,
+                            app.container.settingsRepository,
+                            app.container.readerEngine
+                        )
+                        val readerVm = ViewModelProvider(activity, factory)[ReaderViewModel::class.java]
+                        val tocList = createMalazanToc()
+                        val words = createMalazanWords()
+                        val page = Page(
+                            start = Locator(if (isLiveness) 3 else 0, if (isLiveness) 245 else 91),
+                            end = Locator(if (isLiveness) 3 else 0, if (isLiveness) 500 else 300),
+                            words = words,
+                            links = emptyList()
+                        )
+                        val bookUi = ReaderBookUiModel(
+                            id = "fixture_malazan",
+                            title = if (isLiveness) "The Complete Malazan (Live)" else "The Complete Malazan",
+                            author = "Steven Erikson",
+                            filePath = "/books/malazan.epub",
+                            spineIndex = if (isLiveness) 3 else 0,
+                            charOffset = if (isLiveness) 245 else 91,
+                            progressPercent = if (isLiveness) 0.28f else 0.10f
+                        )
+                        val prog = Progress(
+                            current = if (isLiveness) 245 else 91,
+                            total = 879,
+                            percent = if (isLiveness) 28f else 10f
+                        )
+                        android.util.Log.d("OpusDebug", "Setting fixture state for $fixtureId, isLiveness=$isLiveness")
+                        readerVm.setFixtureState(
+                            book = bookUi,
+                            page = page,
+                            progress = prog,
+                            toc = tocList,
+                            chromeVisible = true,
+                            activeSheet = if (fixtureId == "D11") ActiveReaderSheet.CONTENTS else null
+                        )
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("OpusDebug", "Error in handleFixtureDeepLink main: ${e.message}", e)
                 }
             }
+        }
+    }
+
+    private fun createMalazanToc(): List<TocEntry> = listOf(
+        TocEntry("Preface to Gardens of the Moon — redux", Locator(0, 0), level = 0),
+        TocEntry("Foreword to Gardens of the Moon — 10th Anniversary Edition", Locator(1, 0), level = 0),
+        TocEntry("Maps", Locator(2, 0), level = 0),
+        TocEntry("Dramatis Personae", Locator(3, 0), level = 0),
+        TocEntry("Prologue", Locator(4, 0), level = 0),
+        TocEntry("Book One: Pale", Locator(5, 0), level = 0),
+        TocEntry("Chapter One", Locator(6, 0), level = 1),
+        TocEntry("Chapter Two", Locator(7, 0), level = 1),
+        TocEntry("Chapter Three", Locator(8, 0), level = 1),
+        TocEntry("Chapter Four", Locator(9, 0), level = 1),
+        TocEntry("Book Two: Darujhistan", Locator(10, 0), level = 0),
+        TocEntry("Chapter Five", Locator(11, 0), level = 1),
+        TocEntry("Chapter Six", Locator(12, 0), level = 1),
+        TocEntry("Chapter Seven", Locator(13, 0), level = 1),
+        TocEntry("Book Three: The Mission", Locator(14, 0), level = 0)
+    )
+
+    private fun createMalazanWords(): List<WordBox> {
+        val text = "it was had brushed shoulders with more than his snare, An and in here and in the capital, Unta. scorch pire as “Is it true, then?” Ganoes asked boldly. comm “Is what true?” —only atten: “The First Sword of Empire. Dassem Ultor. We heard in the capital before we left. He’s dead. Is it true? Is Dassem dead?” The man seemed to flinch, his gaze unwavering on the Mouse. “Such is war,” he muttered, under his breath, as if the words were not meant for anyone else’s ears. “You're with the Third. I thought the Third was with him, in Seven Cities. At Y'ghatan—” “Hood's Breath, they're still looking for his body in the still-hot rubble of that damned city, and here you are, a merchant's son three thousand leagues from Seven Cities with information only a few are supposed to possess.” He still did not turn. “I know not your sources, but take my advice and keep what you know to yourself.” Ganoes shrugged. “It's said he betrayed a god.” Finally the man faced him. His face was scarred, and something that might have been a burn marred his jaw and left cheek. For all that, he looked young for a commander. “Heed the lesson there, son.” “What lesson?” “Every decision you make can change the world. The best life is the one the gods don't notice. You want to live free, boy, live quietly.” “I want to be a soldier. A hero.” “You'll grow out of it.” Mock's Vane squealed as a wayward gust from the harbor cleared the grainy smoke. Ganoes could now smell rotting fish and the waterfront's stink of humanity."
+        var offset = 0
+        return text.split("\\s+".toRegex()).map { word ->
+            val start = offset
+            offset += word.length + 1
+            WordBox(
+                text = word,
+                rect = android.graphics.RectF(),
+                start = Locator(0, start),
+                end = Locator(0, offset - 1)
+            )
         }
     }
 

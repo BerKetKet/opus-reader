@@ -34,6 +34,8 @@ import app.opusreader.feature.home.HomeScreen
 import app.opusreader.feature.library.LibraryScreen
 import app.opusreader.feature.library.LibraryViewModel
 import app.opusreader.feature.more.MoreScreen
+import app.opusreader.feature.reader.ReaderScreen
+import app.opusreader.feature.reader.ReaderViewModel
 import coil.compose.AsyncImage
 
 sealed class Screen(val route: String, val label: String, val tag: String, val iconRes: Int, val id: Int) {
@@ -51,12 +53,23 @@ fun OpusNavHost(
 ) {
     LaunchedEffect(deepLinkUri) {
         if (deepLinkUri != null) {
-            navController.navigate(Screen.Library.route) {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    saveState = true
+            val uri = android.net.Uri.parse(deepLinkUri)
+            val segment = uri.lastPathSegment?.uppercase()
+            if (segment == "D10" || segment == "D11") {
+                navController.navigate("reader/fixture_malazan") {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
                 }
-                launchSingleTop = true
-                restoreState = true
+            } else {
+                navController.navigate(Screen.Library.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
             }
         }
     }
@@ -113,13 +126,13 @@ fun OpusNavHost(
             composable(Screen.Home.route) {
                 HomeScreen(
                     modifier = Modifier.testTag("screen_home"),
-                    onOpenBook = { _ -> }
+                    onOpenBook = { bookId -> navController.navigate("reader/$bookId") }
                 )
             }
             composable(Screen.Library.route) {
                 LibraryScreen(
                     uiState = libraryUiState,
-                    onOpenBook = { },
+                    onOpenBook = { bookId -> navController.navigate("reader/$bookId") },
                     onSearchQueryChange = libraryViewModel::onSearchQueryChange,
                     onFilterChange = libraryViewModel::onFilterChange,
                     onViewModeChange = libraryViewModel::onViewModeChange,
@@ -144,10 +157,54 @@ fun OpusNavHost(
                     onNavigateToSettings = { }
                 )
             }
+            composable("reader/{bookId}") { backStackEntry ->
+                val bookId = backStackEntry.arguments?.getString("bookId") ?: ""
+                val readerViewModel: ReaderViewModel = if (activity != null) {
+                    viewModel(
+                        viewModelStoreOwner = activity,
+                        factory = ReaderViewModel.provideFactory(
+                            app.container.libraryRepository,
+                            app.container.settingsRepository,
+                            app.container.readerEngine
+                        )
+                    )
+                } else {
+                    viewModel(
+                        factory = ReaderViewModel.provideFactory(
+                            app.container.libraryRepository,
+                            app.container.settingsRepository,
+                            app.container.readerEngine
+                        )
+                    )
+                }
+
+                LaunchedEffect(bookId) {
+                    if (bookId.isNotEmpty() && !bookId.startsWith("fixture_")) {
+                        readerViewModel.loadBook(bookId)
+                    }
+                }
+
+                val readerUiState by readerViewModel.uiState.collectAsStateWithLifecycle()
+
+                ReaderScreen(
+                    uiState = readerUiState,
+                    onBackClick = { navController.popBackStack() },
+                    onPreviousPage = readerViewModel::onPreviousPage,
+                    onNextPage = readerViewModel::onNextPage,
+                    onToggleChrome = readerViewModel::onToggleChrome,
+                    onToggleBookmark = readerViewModel::onToggleBookmark,
+                    onScrubberChange = readerViewModel::onScrubberChange,
+                    onScrubberCommit = readerViewModel::onScrubberCommit,
+                    onOpenSheet = readerViewModel::onOpenSheet,
+                    onDismissSheet = readerViewModel::onDismissSheet,
+                    onJumpToToc = readerViewModel::onJumpToToc
+                )
+            }
         }
 
-        // Bottom Navigation Bar (hidden when a window-level bottom sheet is active)
-        if (libraryUiState.activeSheet == null) {
+        // Bottom Navigation Bar (hidden when not on top-level tabs or when a window-level bottom sheet is active)
+        val isTopLevelScreen = currentRoute in listOf(Screen.Home.route, Screen.Library.route, Screen.More.route)
+        if (isTopLevelScreen && libraryUiState.activeSheet == null) {
             OpusBottomNavBar(
                 items = navItems,
                 selectedId = selectedId,
@@ -175,7 +232,7 @@ fun OpusNavHost(
         ) {
             OpusResumeCover(
                 title = lastBook.title,
-                onResumeClick = { },
+                onResumeClick = { navController.navigate("reader/${lastBook.id}") },
                 coverContent = if (lastBook.coverPath != null) {
                     {
                         AsyncImage(
