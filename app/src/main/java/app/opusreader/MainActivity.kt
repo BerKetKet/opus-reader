@@ -17,6 +17,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        app.opusreader.debug.DebugFixtureController.ensureDefaultData(this)
         handleIntent(intent)
 
         setContent {

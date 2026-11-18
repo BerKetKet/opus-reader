@@ -31,6 +31,36 @@ import kotlinx.coroutines.withContext
 
 object DebugFixtureController {
 
+    fun ensureDefaultData(context: Context) {
+        val app = context.applicationContext as OpusApplication
+        val db = OpusDatabase.getInstance(app)
+        val bookDao = db.bookDao()
+        CoroutineScope(Dispatchers.IO).launch {
+            val existing = bookDao.getAllBooksOnce()
+            if (existing.isEmpty()) {
+                val books = createD01Books(false).toMutableList()
+                val malazan = BookEntity(
+                    id = "fixture_malazan",
+                    title = "The Complete Malazan",
+                    author = "Steven Erikson",
+                    filePath = "/books/malazan.epub",
+                    coverPath = "android.resource://app.opusreader/drawable/cover_0",
+                    spineIndex = 0,
+                    charOffset = 91,
+                    progressPercent = 0.10f,
+                    lastReadTimestamp = System.currentTimeMillis()
+                )
+                books.add(0, malazan)
+                bookDao.insertBooks(books)
+                val annotDao = db.annotationDao()
+                annotDao.deleteAnnotationsForBook("fixture_malazan")
+                for (annot in createMalazanAnnotations(false)) {
+                    annotDao.insertAnnotation(annot)
+                }
+            }
+        }
+    }
+
     fun handleFixtureDeepLink(context: Context, fixtureUri: String) {
         android.util.Log.d("OpusDebug", "handleFixtureDeepLink received: $fixtureUri")
         val uri = Uri.parse(fixtureUri)

@@ -125,8 +125,11 @@ fun OpusNavHost(
         ) {
             composable(Screen.Home.route) {
                 HomeScreen(
-                    modifier = Modifier.testTag("screen_home"),
-                    onOpenBook = { bookId -> navController.navigate("reader/$bookId") }
+                    books = libraryUiState.allBooks,
+                    resumeBook = libraryUiState.lastReadBook,
+                    onOpenBook = { bookId -> navController.navigate("reader/$bookId") },
+                    onSearchClick = { navController.navigate(Screen.Library.route) },
+                    modifier = Modifier.testTag("screen_home")
                 )
             }
             composable(Screen.Library.route) {
